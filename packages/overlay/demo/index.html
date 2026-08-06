@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overlay harness</title>
+    <link rel="stylesheet" href="./harness.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <strong>Overlay harness</strong>
+      <span>A hostile-ish host page: fixed header, long scroll, its own styles.</span>
+    </header>
+
+    <aside class="panel">
+      <h2>Drive it</h2>
+      <button data-drive="near">Highlight a nearby control</button>
+      <button data-drive="far">Highlight a control far down</button>
+      <button data-drive="risky">Risky step (needs confirmation)</button>
+      <button data-drive="vanish">Highlight, then delete the target</button>
+      <button data-drive="message">Message only, no target</button>
+      <button data-drive="blocked">Sensitive page</button>
+      <button data-drive="hide">Hide</button>
+      <p class="hint">Esc cancels. Scroll and resize while a step is showing.</p>
+    </aside>
+
+    <main>
+      <section>
+        <h1>Section one</h1>
+        <p>
+          This page sets its own font sizes, z-index stacking and a fixed header, so the
+          overlay has to survive a host it does not control.
+        </p>
+        <button id="near" class="app-button">Save changes</button>
+      </section>
+
+      <section class="tall">
+        <h2>Filler</h2>
+        <p>Scroll past this to check the ring stays glued to its target.</p>
+      </section>
+
+      <section>
+        <h2>Section two</h2>
+        <button id="vanish" class="app-button">Temporary control</button>
+      </section>
+
+      <section class="tall">
+        <h2>More filler</h2>
+      </section>
+
+      <section>
+        <h2>Danger zone</h2>
+        <button id="risky" class="app-button danger">Delete account</button>
+      </section>
+
+      <section class="tall">
+        <h2>Even more filler</h2>
+      </section>
+
+      <section>
+        <h2>Section three</h2>
+        <button id="far" class="app-button">Export report</button>
+      </section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

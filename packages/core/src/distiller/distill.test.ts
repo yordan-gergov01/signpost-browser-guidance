@@ -1,6 +1,7 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
 import { distill } from '@hintora/core/distiller/distill';
 import { REDACTED } from '@hintora/core/distiller/state';
+import { OVERLAY_HOST_ATTRIBUTE } from '@hintora/core/distiller/selectors';
 import { pageMapSchema } from '@hintora/core/types/pageMap';
 import type { PageElement, PageMap } from '@hintora/core/types/pageMap';
 import { mountHtml, readFixture } from '@hintora/core/testing/domFixtures';
@@ -80,6 +81,17 @@ suite('distill', () => {
       stubLayout(document);
       const collapsed = distill(document, { viewport: { width: 0, height: 0 } });
       expect(collapsed.elements.some((element) => element.inViewport)).toBe(true);
+    });
+
+    test('never maps its own overlay', () => {
+      const host = document.createElement('div');
+      host.setAttribute(OVERLAY_HOST_ATTRIBUTE, '');
+      host.innerHTML = '<button>Skip step</button>';
+      document.body.append(host);
+      stubLayout(document);
+
+      const names = distill(document).elements.map((element) => element.name);
+      expect(names).not.toContain('Skip step');
     });
 
     test('drops non-interactive text content', () => {
