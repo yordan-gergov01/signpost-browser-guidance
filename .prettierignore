@@ -2,4 +2,8 @@ node_modules/
 dist/
 coverage/
 package-lock.json
+
+# Captured artifacts. Reformatting them changes byte counts and injects
+# whitespace that alters accessible names.
 evals/fixtures/
+packages/core/src/distiller/fixtures/

@@ -5,5 +5,9 @@
   "type": "module",
   "exports": {
     "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "dom-accessibility-api": "^0.7.1",
+    "zod": "^4.4.3"
   }
 }

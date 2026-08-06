@@ -1,0 +1,26 @@
+<html lang="en">
+  <head>
+    <title>Acme CRM</title>
+  </head>
+  <body>
+    <nav aria-label="Main">
+      <a href="/contacts">Contacts</a>
+      <a href="/deals">Deals</a>
+    </nav>
+    <main>
+      <h1>Contacts</h1>
+      <section aria-label="All contacts">
+        <h2>All contacts</h2>
+        <button data-testid="contacts-export">Export</button>
+        <button data-testid="add-contact">Add contact</button>
+      </section>
+    </main>
+    <div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <h2 id="dialog-title">Add contact</h2>
+      <label for="full-name">Full name</label>
+      <input id="full-name" type="text" />
+      <button data-testid="cancel-contact">Cancel</button>
+      <button data-testid="save-contact">Save contact</button>
+    </div>
+  </body>
+</html>

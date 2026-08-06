@@ -1,0 +1,55 @@
+<html lang="en">
+  <head>
+    <title>Edge cases</title>
+  </head>
+  <body>
+    <main>
+      <h1>Edge cases</h1>
+
+      <section aria-label="Visible">
+        <h2>Visible</h2>
+        <button data-testid="ok">Keep me</button>
+        <a href="/reports?range=30d&amp;team=sales#top">Reports</a>
+        <div role="button" tabindex="0">Custom control</div>
+        <div onclick="void 0">Legacy handler</div>
+      </section>
+
+      <section aria-label="Hidden">
+        <h2>Hidden</h2>
+        <div aria-hidden="true"><button>Aria hidden</button></div>
+        <div inert><button>Inert</button></div>
+        <div style="display: none"><button>Display none</button></div>
+        <div style="visibility: hidden"><button>Visibility hidden</button></div>
+        <button data-stub-rect="0,0,0,0">Zero area</button>
+        <button data-stub-rect="0,0,1,1">Clipped</button>
+        <button data-stub-rect="-9999,0,120,24">Off canvas</button>
+      </section>
+
+      <section aria-label="State">
+        <h2>State</h2>
+        <button disabled>Disabled button</button>
+        <button aria-disabled="true">Aria disabled</button>
+        <input type="checkbox" aria-label="Weekly digest" checked />
+        <input type="radio" aria-label="Monthly" />
+        <button aria-expanded="false" aria-label="Open menu">Menu</button>
+        <select aria-label="Stage">
+          <option>Discovery</option>
+          <option selected>Negotiation</option>
+        </select>
+      </section>
+
+      <section aria-label="Values">
+        <h2>Values</h2>
+        <input type="email" aria-label="Work email" value="jane@acme.test" />
+        <input type="text" aria-label="Empty field" value="" />
+        <textarea aria-label="Notes">Card 4111 1111 1111 1111</textarea>
+        <div contenteditable="true" aria-label="Rich note">+44 7700 900123</div>
+      </section>
+
+      <details>
+        <summary>More options</summary>
+        <button>Nested action</button>
+      </details>
+    </main>
+  </body>
+</html>
