@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@import '@hintora/tailwind-preset/theme.css';
+
+body {
+  @apply bg-ink-100 text-ink-800 font-sans antialiased;
+}
