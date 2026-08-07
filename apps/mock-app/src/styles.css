@@ -2,5 +2,16 @@
 @import '@hintora/tailwind-preset/theme.css';
 
 body {
-  @apply bg-ink-100 text-ink-800 font-sans antialiased;
+  @apply bg-ink-50 text-ink-800 font-sans antialiased;
+}
+
+/* One focus treatment for the whole application, and a visible one. Guidance
+   points at controls; a control that cannot show it has focus undoes that. */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent-500;
+}
+
+/* Figures in tables line up by column rather than by glyph width. */
+table {
+  font-variant-numeric: tabular-nums;
 }

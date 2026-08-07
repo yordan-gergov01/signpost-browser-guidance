@@ -35,15 +35,15 @@ export function Dialog({ title, onClose, footer, children }: DialogProps) {
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="relative w-full max-w-md rounded-lg bg-white shadow-xl outline-none"
+        className="relative w-full max-w-md rounded-xl bg-white shadow-raised outline-none ring-1 ring-ink-200"
       >
-        <header className="border-b border-ink-200 px-4 py-3">
+        <header className="border-b border-ink-200 px-5 py-3.5">
           <h2 id={titleId} className="text-sm font-semibold text-ink-900">
             {title}
           </h2>
         </header>
-        <div className="space-y-3 p-4">{children}</div>
-        <footer className="flex justify-end gap-2 border-t border-ink-200 px-4 py-3">
+        <div className="space-y-4 p-5">{children}</div>
+        <footer className="flex flex-wrap justify-end gap-2 rounded-b-xl border-t border-ink-200 bg-ink-50 px-5 py-3.5">
           {footer}
         </footer>
       </div>

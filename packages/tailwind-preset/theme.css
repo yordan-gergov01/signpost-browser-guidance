@@ -5,34 +5,48 @@
  *   @import 'tailwindcss';
  *   @import '@hintora/tailwind-preset/theme.css';
  *
- * Not used by the overlay, which ships scoped CSS inside a shadow root.
+ * Not used by the overlay, which ships scoped CSS inside a shadow root. The two
+ * palettes are kept apart on purpose: everything here is cool and squared off,
+ * and the guide is warm and round, so a user can tell at a glance which of the
+ * two is talking to them.
  */
 
 @theme {
   --color-ink-50: #f8fafc;
   --color-ink-100: #f1f5f9;
-  --color-ink-200: #e2e8f0;
-  --color-ink-300: #cbd5e1;
-  --color-ink-400: #94a3b8;
-  --color-ink-500: #64748b;
-  --color-ink-600: #475569;
-  --color-ink-700: #334155;
-  --color-ink-800: #1e293b;
-  --color-ink-900: #0f172a;
+  --color-ink-200: #e6ebf2;
+  --color-ink-300: #cfd8e3;
+  --color-ink-400: #9aa8bd;
+  --color-ink-500: #6b7a92;
+  --color-ink-600: #4d5b72;
+  --color-ink-700: #37445a;
+  --color-ink-800: #212c3f;
+  --color-ink-900: #101828;
 
-  --color-accent-50: #eef2ff;
-  --color-accent-100: #e0e7ff;
-  --color-accent-200: #c7d2fe;
-  --color-accent-500: #6366f1;
-  --color-accent-600: #4f46e5;
-  --color-accent-700: #4338ca;
+  --color-accent-50: #eef3ff;
+  --color-accent-100: #dbe5ff;
+  --color-accent-200: #bfd0ff;
+  --color-accent-300: #93b0ff;
+  --color-accent-500: #3b6cf6;
+  --color-accent-600: #2456e6;
+  --color-accent-700: #1c44b8;
 
-  --color-danger-50: #fef2f2;
-  --color-danger-200: #fecaca;
-  --color-danger-600: #dc2626;
-  --color-danger-700: #b91c1c;
+  --color-success-50: #ecfdf3;
+  --color-success-200: #a9efc5;
+  --color-success-700: #067647;
+
+  --color-danger-50: #fef3f2;
+  --color-danger-200: #fecdca;
+  --color-danger-600: #d92d20;
+  --color-danger-700: #b42318;
 
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
+
+  /* One elevation step, used everywhere. Panels that each invent their own
+     shadow are the fastest way to make an application look assembled. */
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.05), 0 1px 3px rgb(16 24 40 / 0.06);
+  --shadow-raised:
+    0 4px 8px -2px rgb(16 24 40 / 0.08), 0 12px 24px -8px rgb(16 24 40 / 0.1);
 }

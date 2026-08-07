@@ -15,18 +15,23 @@ export function Panel({ title, description, actions, children }: PanelProps) {
   return (
     <section
       aria-labelledby={headingId}
-      className="rounded-lg bg-white shadow-sm ring-1 ring-ink-200"
+      className="overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-200"
     >
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-200 px-4 py-3">
-        <div>
-          <h2 id={headingId} className="text-sm font-semibold text-ink-900">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-200 bg-gradient-to-b from-white to-ink-50/60 px-4 py-3 sm:px-5">
+        <div className="min-w-0">
+          <h2
+            id={headingId}
+            className="text-[13px] font-semibold tracking-tight text-ink-900"
+          >
             {title}
           </h2>
-          {description ? <p className="text-xs text-ink-500">{description}</p> : null}
+          {description ? (
+            <p className="mt-0.5 text-xs text-ink-500">{description}</p>
+          ) : null}
         </div>
         {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
       </header>
-      <div className="p-4">{children}</div>
+      <div className="p-4 sm:p-5">{children}</div>
     </section>
   );
 }

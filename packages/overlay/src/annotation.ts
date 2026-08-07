@@ -1,8 +1,14 @@
 import { TIER_LABEL, type GuidanceTier } from '@hintora/core/types/guidance';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const PIN_SIZE = 24;
-const PIN_OFFSET = 10;
+const PIN_SIZE = 26;
+const PIN_OFFSET = 11;
+const NOTE_WIDTH = 328;
+const GAP = 26;
+const MARGIN = 12;
+
+/** Below this there is no "beside the control", so the note becomes a sheet. */
+const SHEET_BELOW_PX = 640;
 
 export type AnnotationAction = {
   label: string;
@@ -102,15 +108,50 @@ export function createAnnotation(): Annotation {
     pin.style.top = `${at.y - PIN_SIZE / 2}px`;
   }
 
-  function pinAnchor(rect: DOMRect): Point {
-    return { x: rect.left - PIN_OFFSET, y: rect.top - PIN_OFFSET };
+  const clamp = (value: number, low: number, high: number): number =>
+    Math.min(Math.max(value, low), high);
+
+  /**
+   * The pin sits on the corner of the target nearest the note, never on the far
+   * one. Anchoring it opposite the note is what made the leader line cut across
+   * the control it was pointing at.
+   *
+   * It is then clamped into the viewport, because a target hard against the top
+   * or left edge would otherwise put its own pin off screen, where a step number
+   * helps nobody.
+   */
+  function pinAnchor(rect: DOMRect, side: 'left' | 'right' | 'below'): Point {
+    const half = PIN_SIZE / 2;
+    const raw: Point =
+      side === 'right'
+        ? { x: rect.right + PIN_OFFSET, y: rect.top - PIN_OFFSET }
+        : side === 'left'
+          ? { x: rect.left - PIN_OFFSET, y: rect.top - PIN_OFFSET }
+          : { x: rect.left - PIN_OFFSET, y: rect.bottom + PIN_OFFSET };
+
+    return {
+      x: clamp(raw.x, half + MARGIN, window.innerWidth - half - MARGIN),
+      y: clamp(raw.y, half + MARGIN, window.innerHeight - half - MARGIN),
+    };
   }
 
-  function drawLeader(from: Point, to: Point): void {
+  function drawLeader(from: Point, to: Point, avoid: DOMRect): void {
     // A shallow curve rather than a straight line: it reads as a pointer drawn
-    // by hand instead of a connector in a diagram.
+    // by hand instead of a connector in a diagram. The control point is pushed
+    // clear of the target so the curve arcs around the control rather than over
+    // the label the user is being asked to read.
     const midX = (from.x + to.x) / 2;
-    leader.setAttribute('d', `M ${from.x} ${from.y} Q ${midX} ${from.y} ${to.x} ${to.y}`);
+    const midY = (from.y + to.y) / 2;
+    const clearsAbove = Math.min(from.y, to.y) < avoid.top;
+
+    const control: Point = clearsAbove
+      ? { x: midX, y: Math.min(from.y, to.y) - 8 }
+      : { x: midX, y: midY };
+
+    leader.setAttribute(
+      'd',
+      `M ${from.x} ${from.y} Q ${control.x} ${control.y} ${to.x} ${to.y}`,
+    );
     lines.classList.remove('hidden');
   }
 
@@ -159,38 +200,64 @@ export function createAnnotation(): Annotation {
     },
 
     place(targetRect) {
-      const anchor = pinAnchor(targetRect);
-      ghostAnchor = anchor;
+      text.classList.remove('note--centred');
+      text.classList.remove('note--sheet');
+      text.style.removeProperty('left');
+      text.style.removeProperty('top');
 
+      const roomRight = window.innerWidth - targetRect.right - GAP - MARGIN;
+      const roomLeft = targetRect.left - GAP - MARGIN;
+
+      // Narrow viewport, or neither flank wide enough to hold the sentence: the
+      // note goes to the bottom of the screen instead of overlapping the control.
+      const side: 'left' | 'right' | 'below' =
+        window.innerWidth < SHEET_BELOW_PX ||
+        (roomRight < NOTE_WIDTH && roomLeft < NOTE_WIDTH)
+          ? 'below'
+          : roomRight >= NOTE_WIDTH
+            ? 'right'
+            : 'left';
+
+      const anchor = pinAnchor(targetRect, side);
+      ghostAnchor = anchor;
       movePin(currentPin, anchor);
       currentPin.classList.remove('hidden');
 
-      text.classList.remove('note--centred');
+      if (side === 'below') {
+        text.classList.add('note--sheet');
+        const noteRect = text.getBoundingClientRect();
+        drawLeader({ x: anchor.x, y: noteRect.top - 2 }, anchor, targetRect);
+        return;
+      }
 
-      // Placed on whichever side of the target has more room, so the note never
-      // covers the control it is describing.
-      const spaceRight = window.innerWidth - targetRect.right;
       const left =
-        spaceRight > 340
-          ? targetRect.right + 28
-          : Math.max(16, targetRect.left - 316 - 28);
-      const top = Math.max(16, targetRect.top - 4);
+        side === 'right' ? targetRect.right + GAP : targetRect.left - NOTE_WIDTH - GAP;
 
       text.style.left = `${left}px`;
+      // Measured, then clamped: a target near the bottom of a short window would
+      // otherwise push its own instruction below the fold.
+      text.style.top = `${Math.max(MARGIN, targetRect.top - 6)}px`;
+
+      const height = text.getBoundingClientRect().height;
+      const top = clamp(targetRect.top - 6, MARGIN, window.innerHeight - height - MARGIN);
       text.style.top = `${top}px`;
 
       const noteRect = text.getBoundingClientRect();
-      const noteEdge: Point = {
-        x: left > targetRect.right ? noteRect.left : noteRect.right,
-        y: noteRect.top + 18,
-      };
-      drawLeader(noteEdge, anchor);
+      drawLeader(
+        {
+          x: side === 'right' ? noteRect.left - 2 : noteRect.right + 2,
+          y: clamp(anchor.y, noteRect.top + 14, noteRect.bottom - 14),
+        },
+        anchor,
+        targetRect,
+      );
     },
 
     centre(centreX) {
       currentPin.classList.add('hidden');
       lines.classList.add('hidden');
       ghostAnchor = null;
+      text.classList.remove('note--sheet');
       text.classList.add('note--centred');
       text.style.left = `${centreX}px`;
       text.style.removeProperty('top');

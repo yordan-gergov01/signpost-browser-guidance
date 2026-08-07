@@ -65,7 +65,7 @@ export function createSpotlight(): Spotlight {
   shade.setAttribute('height', '100%');
   // Light enough to read and work through. The beam is pointing at a control,
   // not taking the screen hostage.
-  shade.setAttribute('fill', 'rgba(6, 10, 18, 0.28)');
+  shade.setAttribute('fill', 'rgba(17, 24, 39, 0.2)');
   shade.setAttribute('mask', `url(#${mask.id})`);
 
   const trail = svg('line');
