@@ -1,29 +1,65 @@
 import type { ActionRisk } from '@hintora/core/safety/actionSafety';
+import type { GuidanceTier } from '@hintora/core/types/guidance';
+import type { Suggestion } from '@hintora/overlay/commandBar';
 
 export type OverlayStep = {
-  /** 1-based, shown as "2/4". */
+  /** 1-based. */
   index: number;
   total: number;
   instruction: string;
+  tier?: GuidanceTier;
   risk?: ActionRisk;
   /** Spelled out for the user when the action is not safe. */
   consequence?: string;
 };
 
 export type OverlayHandlers = {
-  onSkip?: () => void;
-  onStuck?: () => void;
+  /** The user submitted an intent in the command bar. */
+  onIntent?: (intent: string) => void;
+  /**
+   * The user acted on the highlighted control. The overlay reports the fact and
+   * nothing more; deciding what comes next belongs to the guidance loop.
+   */
+  onTargetActivated?: () => void;
+  /** The user says they had already completed this step. */
+  onAlreadyDone?: () => void;
+  /** The user says the step does not match what they are looking at. */
+  onWrongStep?: () => void;
   onCancel?: () => void;
-  /** Called when the user accepts a destructive or irreversible step. */
+  /** The user accepted a destructive or irreversible step. */
   onConfirm?: () => void;
 };
 
+export type OverlayOptions = {
+  handlers?: OverlayHandlers;
+  /** Shown when the command bar opens, so the first use explains itself. */
+  suggestions?: readonly Suggestion[];
+  /** Hex, validated. Anything else falls back to the default accent. */
+  accent?: string;
+  /**
+   * Ctrl/Cmd+K. Defaults to on, but plenty of applications already own that
+   * chord for their own palette, and a guest that takes it is a bug report.
+   */
+  hotkey?: boolean;
+};
+
 export type Overlay = {
-  /** Highlights `target`. A detached target degrades to a text-only card. */
+  /** Opens the command bar. Also bound to Ctrl/Cmd+K. */
+  ask: () => void;
+  /** Between the question and the first step. */
+  thinking: (message?: string) => void;
   showStep: (target: Element | null, step: OverlayStep) => void;
-  /** Card with no highlight, for "not on this page" and low-confidence answers. */
+  /**
+   * The step is confirmed done and earns its ghost pin. Called by the loop once
+   * the page has actually moved, never by the click that asked it to.
+   */
+  confirmStep: () => void;
+  /** No target: not on this page, or the step could not be resolved. */
   showMessage: (message: string, step?: Partial<OverlayStep>) => void;
+  /** Final confirmation, then the guide takes itself off screen. */
+  complete: (message: string) => void;
   showBlocked: (reason: string) => void;
+  /** Back to nothing on screen. */
   hide: () => void;
   destroy: () => void;
 };

@@ -5,7 +5,7 @@ export default defineConfig({
     // The distiller reads visibility, layout and accessible names, so unit tests
     // need a DOM. happy-dom keeps the suite fast enough to gate the build on.
     environment: 'happy-dom',
-    include: ['packages/**/*.test.ts', 'evals/**/*.test.ts'],
+    include: ['packages/**/*.test.ts', 'apps/**/*.test.ts', 'evals/**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/dist/**'],
   },
 });

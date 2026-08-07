@@ -5,5 +5,10 @@
   "type": "module",
   "exports": {
     "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "@hintora/client": "^0.1.0",
+    "@hintora/core": "^0.1.0",
+    "zod": "^4.4.3"
   }
 }

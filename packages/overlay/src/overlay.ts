@@ -1,17 +1,19 @@
-import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+import { autoUpdate } from '@floating-ui/dom';
 import { OVERLAY_HOST_ATTRIBUTE } from '@hintora/core/distiller/selectors';
-import { createCard } from '@hintora/overlay/card';
-import type { CardButton } from '@hintora/overlay/card';
+import { createAnnotation } from '@hintora/overlay/annotation';
+import type { AnnotationAction } from '@hintora/overlay/annotation';
+import { createCommandBar } from '@hintora/overlay/commandBar';
+import { contentCentreX } from '@hintora/overlay/contentArea';
 import { createOffscreenChip, isOffscreen } from '@hintora/overlay/offscreen';
 import { createSpotlight } from '@hintora/overlay/spotlight';
-import { OVERLAY_CSS } from '@hintora/overlay/styles';
-import type { Overlay, OverlayHandlers, OverlayStep } from '@hintora/overlay/types';
+import { overlayCss } from '@hintora/overlay/styles';
+import { resolveAccent } from '@hintora/overlay/theme';
+import type { Overlay, OverlayOptions, OverlayStep } from '@hintora/overlay/types';
 
-const TOOLTIP_GAP = 12;
-const VIEWPORT_PADDING = 8;
+const COMPLETE_LINGER_MS = 2600;
 
-// The host sits above everything, but lets clicks through. We guide; the user
-// clicks the real button underneath. Only the card opts back into pointer events.
+// Above everything, but transparent to clicks. We guide; the user clicks the
+// real control underneath. Only our own surfaces opt back in.
 const HOST_STYLE =
   'all: initial; position: fixed; inset: 0; z-index: 2147483647; pointer-events: none;';
 
@@ -19,95 +21,96 @@ function hasArea(rect: DOMRect): boolean {
   return rect.width > 0 && rect.height > 0;
 }
 
-export function createOverlay(handlers: OverlayHandlers = {}): Overlay {
+export function createOverlay(options: OverlayOptions = {}): Overlay {
+  const handlers = options.handlers ?? {};
+  const suggestions = options.suggestions ?? [];
+  const hotkey = options.hotkey ?? true;
+
   const host = document.createElement('div');
   host.setAttribute(OVERLAY_HOST_ATTRIBUTE, '');
   host.style.cssText = HOST_STYLE;
 
-  // Closed: the host page cannot reach in and restyle or read our UI.
+  // Closed: the host page cannot reach in to restyle or read the guide.
   const shadow = host.attachShadow({ mode: 'closed' });
+
   const style = document.createElement('style');
-  style.textContent = OVERLAY_CSS;
+  style.textContent = overlayCss(resolveAccent(document, options.accent));
+
+  const layer = document.createElement('div');
+  layer.className = 'layer';
 
   const spotlight = createSpotlight();
-  const card = createCard();
   const chip = createOffscreenChip();
+  const note = createAnnotation();
+  const bar = createCommandBar({
+    onSubmit: (intent) => {
+      bar.close();
+      handlers.onIntent?.(intent);
+    },
+    onDismiss: () => bar.close(),
+  });
 
-  shadow.append(style, spotlight.element, spotlight.ring, chip.element, card.element);
+  layer.append(...spotlight.nodes, chip.element, ...note.nodes, bar.element);
+  shadow.append(style, layer);
   document.documentElement.append(host);
 
   let stopTracking: (() => void) | null = null;
   let scrollAttempted = false;
+  let sessionActive = false;
+  let lingerTimer = 0;
 
-  function centreCard(): void {
-    card.element.classList.add('card--centered');
-    card.element.style.left = '';
-    card.element.style.top = '';
-  }
-
-  function anchorCard(target: Element): void {
-    card.element.classList.remove('card--centered');
-    void computePosition(target, card.element, {
-      placement: 'bottom',
-      middleware: [offset(TOOLTIP_GAP), flip(), shift({ padding: VIEWPORT_PADDING })],
-    }).then(({ x, y }) => {
-      card.element.style.left = `${x}px`;
-      card.element.style.top = `${y}px`;
-    });
-  }
-
-  function stop(): void {
+  function detach(): void {
     stopTracking?.();
     stopTracking = null;
   }
 
-  function hide(): void {
-    stop();
+  function clearStage(): void {
+    window.clearTimeout(lingerTimer);
+    detach();
     spotlight.clear();
     chip.hide();
-    card.element.classList.add('hidden');
   }
 
-  function stepButtons(): CardButton[] {
+  function endSession(): void {
+    handlers.onCancel?.();
+    api.hide();
+  }
+
+  function stepActions(): AnnotationAction[] {
     return [
-      { label: 'Skip step', onClick: () => handlers.onSkip?.() },
-      { label: "I'm stuck", onClick: () => handlers.onStuck?.() },
-      {
-        label: 'Cancel',
-        onClick: () => {
-          handlers.onCancel?.();
-          hide();
-        },
-      },
+      { label: "I've done this", onClick: () => handlers.onAlreadyDone?.() },
+      { label: 'This is not it', onClick: () => handlers.onWrongStep?.() },
+      { label: 'Stop', onClick: endSession },
     ];
   }
 
+  function viewOf(step: OverlayStep, instruction = step.instruction) {
+    return {
+      index: step.index,
+      total: step.total,
+      instruction,
+      tier: step.tier,
+      actions: stepActions(),
+    };
+  }
+
   /**
-   * The target vanished mid-step - the app re-rendered, the row was filtered
-   * away, a dialog closed. Drop the highlight and keep the words.
+   * The target vanished mid-step: the app re-rendered, the row was filtered out,
+   * a dialog closed. Drop the beam, keep the words.
    */
   function degrade(step: OverlayStep): void {
-    stop();
-    spotlight.clear();
-    chip.hide();
-    centreCard();
-    card.render({
-      counter: `${step.index}/${step.total}`,
-      instruction: `${step.instruction} (that control is no longer on the page)`,
-      buttons: stepButtons(),
-    });
+    clearStage();
+    note.render(viewOf(step, `${step.instruction} That control just left the page.`));
+    note.centre(contentCentreX(document));
   }
 
   function track(target: Element, step: OverlayStep): void {
-    stop();
+    clearStage();
     scrollAttempted = false;
+    sessionActive = true;
+    note.render(viewOf(step));
 
-    card.element.classList.remove('hidden');
-    card.render({
-      counter: `${step.index}/${step.total}`,
-      instruction: step.instruction,
-      buttons: stepButtons(),
-    });
+    let landed = false;
 
     const reposition = (): void => {
       const rect = target.getBoundingClientRect();
@@ -120,89 +123,127 @@ export function createOverlay(handlers: OverlayHandlers = {}): Overlay {
         spotlight.clear();
         if (!scrollAttempted) {
           scrollAttempted = true;
-          // Instant, not smooth. The scroll completes inside this call, so the
-          // next frame sees the settled rect and the off-screen chip never
-          // flashes mid-animation. It also ignores a host page that set
-          // `scroll-behavior: smooth` on the document.
+          // Instant, not smooth: the scroll finishes inside this call, so the
+          // next frame sees a settled rect and the off-screen chip never flashes
+          // mid-animation. It also ignores a host that set `scroll-behavior`.
           target.scrollIntoView({ block: 'center', behavior: 'instant' });
           reposition();
           return;
         }
         chip.point(rect);
-        centreCard();
+        note.centre(contentCentreX(document));
         return;
       }
 
       chip.hide();
-      spotlight.focus(rect);
-      anchorCard(target);
+      // Travel once, on arrival. Everything after is scroll and resize, where the
+      // beam has to stay welded rather than chase.
+      if (landed) spotlight.snapTo(rect);
+      else {
+        spotlight.moveTo(rect);
+        landed = true;
+      }
+      note.place(rect);
     };
 
-    const stopPositioning = autoUpdate(target, card.element, reposition);
+    const stopPositioning = autoUpdate(target, note.noteElement, reposition);
 
     // Removal is not a positioning event, so it is not the positioning library's
-    // job to notice it. A stale ring pointing at a control that no longer exists
-    // is the failure mode worth spending an observer on.
+    // job to notice it. A stale beam on a control that no longer exists is the
+    // failure worth spending an observer on.
     const observer = new MutationObserver(() => {
       if (!target.isConnected) degrade(step);
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Capture phase, because the application re-renders on its own click handler
+    // and the element may be gone by the time bubbling reaches us.
+    const onActivated = (event: Event): void => {
+      const node = event.target;
+      if (!(node instanceof Node) || !target.contains(node)) return;
+      // No ghost pin yet. The route is a record of what the user achieved, and a
+      // click on a control that does nothing has achieved nothing.
+      handlers.onTargetActivated?.();
+    };
+    document.addEventListener('click', onActivated, true);
+
     stopTracking = () => {
       stopPositioning();
       observer.disconnect();
+      document.removeEventListener('click', onActivated, true);
     };
 
     reposition();
   }
 
   function confirmFirst(target: Element, step: OverlayStep): void {
-    stop();
-    spotlight.clear();
-    chip.hide();
-    centreCard();
-    card.element.classList.remove('hidden');
-    card.render({
-      counter: `${step.index}/${step.total}`,
+    clearStage();
+    sessionActive = true;
+    note.render({
+      index: step.index,
+      total: step.total,
       instruction: step.instruction,
-      consequence: step.consequence ?? 'This action cannot be undone.',
-      buttons: [
+      tier: step.tier,
+      consequence: step.consequence ?? 'This cannot be undone.',
+      actions: [
         {
-          label: 'Show me the control',
+          label: 'Show me where',
           variant: 'danger',
           onClick: () => {
             handlers.onConfirm?.();
             track(target, step);
           },
         },
-        {
-          label: 'Cancel',
-          onClick: () => {
-            handlers.onCancel?.();
-            hide();
-          },
-        },
+        { label: 'Not now', onClick: endSession },
       ],
     });
+    note.centre(contentCentreX(document));
   }
 
   function onKeyDown(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    handlers.onCancel?.();
-    hide();
+    if (hotkey && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      api.ask();
+      return;
+    }
+    if (event.key === 'Escape' && (bar.isOpen() || sessionActive)) endSession();
   }
 
   document.addEventListener('keydown', onKeyDown, true);
 
-  return {
+  const api: Overlay = {
+    ask() {
+      clearStage();
+      note.hide();
+      note.clearRoute();
+      bar.open(suggestions, contentCentreX(document));
+    },
+
+    thinking(message) {
+      sessionActive = true;
+      clearStage();
+      bar.close();
+      note.render({
+        index: 0,
+        total: 0,
+        instruction: message ?? 'Reading the page…',
+        actions: [{ label: 'Stop', onClick: endSession }],
+      });
+      note.centre(contentCentreX(document));
+    },
+
+    confirmStep() {
+      note.completeCurrent();
+    },
+
     showStep(target, step) {
       if (!target || !target.isConnected) {
-        this.showMessage(step.instruction, step);
+        api.showMessage(step.instruction, step);
         return;
       }
 
-      // Anything not classified safe gets a confirmation before we so much as
-      // point at it. Highlighting is itself a nudge.
+      // Anything not classified safe is confirmed before we so much as point at
+      // it. Highlighting is itself a nudge towards pressing the thing.
       if (step.risk && step.risk !== 'safe') {
         confirmFirst(target, step);
         return;
@@ -212,37 +253,57 @@ export function createOverlay(handlers: OverlayHandlers = {}): Overlay {
     },
 
     showMessage(message, step) {
-      stop();
-      spotlight.clear();
-      chip.hide();
-      centreCard();
-      card.element.classList.remove('hidden');
-      const counter =
-        step?.index !== undefined && step.total !== undefined
-          ? `${step.index}/${step.total}`
-          : undefined;
+      clearStage();
+      sessionActive = true;
+      note.render({
+        index: step?.index ?? 0,
+        total: step?.total ?? 0,
+        instruction: message,
+        tier: step?.tier,
+        actions: [{ label: 'Close', onClick: endSession }],
+      });
+      note.centre(contentCentreX(document));
+    },
 
-      card.render({ counter, instruction: message, buttons: stepButtons() });
+    complete(message) {
+      clearStage();
+      note.render({
+        index: 0,
+        total: 0,
+        instruction: message,
+        actions: [],
+      });
+      note.centre(contentCentreX(document));
+      // Say it, then get off the screen. A guide that stays open after the job
+      // is done has turned back into a widget.
+      lingerTimer = window.setTimeout(() => api.hide(), COMPLETE_LINGER_MS);
     },
 
     showBlocked(reason) {
-      stop();
-      spotlight.clear();
-      chip.hide();
-      centreCard();
-      card.element.classList.remove('hidden');
-      card.render({
-        instruction: `Hintora is off on this page. ${reason}`,
-        buttons: [{ label: 'Dismiss', onClick: hide }],
+      clearStage();
+      note.render({
+        index: 0,
+        total: 0,
+        instruction: `Hintora stays off here. ${reason}`,
+        actions: [{ label: 'Close', onClick: endSession }],
       });
+      note.centre(contentCentreX(document));
     },
 
-    hide,
+    hide() {
+      clearStage();
+      bar.close();
+      note.hide();
+      note.clearRoute();
+      sessionActive = false;
+    },
 
     destroy() {
-      hide();
+      api.hide();
       document.removeEventListener('keydown', onKeyDown, true);
       host.remove();
     },
   };
+
+  return api;
 }

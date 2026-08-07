@@ -14,13 +14,24 @@ export function AppShell({ children }: { children: ReactNode }) {
             placeholder="Search"
             className="w-72 rounded-md border border-ink-300 px-3 py-1.5 text-sm outline-none focus:border-accent-500"
           />
-          <button
-            type="button"
-            aria-label="Account menu"
-            className="rounded-full bg-ink-200 px-3 py-1.5 text-sm font-medium text-ink-700"
-          >
-            JD
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Acme's Help button, wired to Hintora by one attribute. There is no
+                Hintora affordance anywhere on this page; the host owns the door. */}
+            <button
+              type="button"
+              data-hintora-trigger=""
+              className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-600 hover:bg-ink-200"
+            >
+              Help
+            </button>
+            <button
+              type="button"
+              aria-label="Account menu"
+              className="rounded-full bg-ink-200 px-3 py-1.5 text-sm font-medium text-ink-700"
+            >
+              JD
+            </button>
+          </div>
         </header>
         <main className="flex-1 space-y-6 p-6">{children}</main>
       </div>

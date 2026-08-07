@@ -2,5 +2,20 @@
   "name": "@hintora/server",
   "version": "0.1.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "dev": "node --env-file=../../.env --watch src/main.ts",
+    "start": "node --env-file=../../.env src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@hintora/core": "^0.1.0",
+    "@hintora/server": "^0.1.0",
+    "fastify": "^5.11.2",
+    "openai": "^7.4.0"
+  }
 }

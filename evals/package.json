@@ -2,5 +2,14 @@
   "name": "@hintora/evals",
   "version": "0.1.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hintora/core": "^0.1.0"
+  }
 }

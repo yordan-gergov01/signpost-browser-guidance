@@ -58,7 +58,7 @@ export default tseslint.config(
   // The overlay is injected into arbitrary host pages, so the no-React rule is
   // enforced rather than documented.
   {
-    files: ['packages/overlay/**/*.ts'],
+    files: ['packages/overlay/**/*.ts', 'apps/sdk/**/*.ts'],
     rules: { 'no-restricted-imports': ['error', { patterns: ['react', 'react-dom'] }] },
   },
 

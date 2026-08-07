@@ -1,4 +1,5 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
+import { TRIGGER_ATTRIBUTE } from '@hintora/core/config/attributes';
 import { distill } from '@hintora/core/distiller/distill';
 import { REDACTED } from '@hintora/core/distiller/state';
 import { OVERLAY_HOST_ATTRIBUTE } from '@hintora/core/distiller/selectors';
@@ -92,6 +93,17 @@ suite('distill', () => {
 
       const names = distill(document).elements.map((element) => element.name);
       expect(names).not.toContain('Skip step');
+    });
+
+    test('never maps the host control that opens it', () => {
+      const help = document.createElement('button');
+      help.setAttribute(TRIGGER_ATTRIBUTE, '');
+      help.textContent = 'Help';
+      document.body.append(help);
+      stubLayout(document);
+
+      const names = distill(document).elements.map((element) => element.name);
+      expect(names).not.toContain('Help');
     });
 
     test('drops non-interactive text content', () => {

@@ -7,7 +7,16 @@ export function SavedReportsPanel() {
     <Panel
       title="Saved reports"
       description="Scheduled exports and shared views"
-      actions={<Button data-testid="reports-export">Export</Button>}
+      actions={
+        <>
+          {/* Acme's own contextual help. The attribute is the whole integration:
+              no Hintora markup, no Hintora styling, their button. */}
+          <Button variant="ghost" data-hintora-trigger="export my contacts">
+            How do I export?
+          </Button>
+          <Button data-testid="reports-export">Export</Button>
+        </>
+      }
     >
       <ul className="divide-y divide-ink-200 text-sm">
         {SAVED_REPORTS.map((report) => (

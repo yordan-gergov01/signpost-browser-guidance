@@ -7,14 +7,10 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "dev": "vite",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.8.0",
     "@hintora/core": "^0.1.0"
-  },
-  "devDependencies": {
-    "vite": "^7.3.6"
   }
 }

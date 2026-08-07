@@ -1,3 +1,4 @@
+import { TRIGGER_ATTRIBUTE } from '@hintora/core/config/attributes';
 import { accessibleNameOf, targetNameOf } from '@hintora/core/distiller/accessibleName';
 import { applyBudget, DEFAULT_MAX_ELEMENTS } from '@hintora/core/distiller/budget';
 import { findActiveModal, modalNameOf } from '@hintora/core/distiller/modal';
@@ -7,6 +8,7 @@ import {
   CANDIDATE_SELECTOR,
   OVERLAY_HOST_ATTRIBUTE,
 } from '@hintora/core/distiller/selectors';
+import { pageSignature } from '@hintora/core/distiller/signature';
 import { safeValueOf, stateOf } from '@hintora/core/distiller/state';
 import {
   boxOf,
@@ -58,8 +60,13 @@ function viewportOf(doc: Document, override?: Viewport): Viewport {
   return candidate.width > 0 && candidate.height > 0 ? candidate : FALLBACK_VIEWPORT;
 }
 
-function isOwnOverlay(element: Element): boolean {
-  return element.closest(`[${OVERLAY_HOST_ATTRIBUTE}]`) !== null;
+/**
+ * Our overlay, and the host's own control for opening it. The trigger belongs to
+ * the customer's UI, but pointing a user at "Help" as a step inside a session
+ * they started from Help is a loop, so it never reaches the model.
+ */
+function isOwnSurface(element: Element): boolean {
+  return element.closest(`[${OVERLAY_HOST_ATTRIBUTE}],[${TRIGGER_ATTRIBUTE}]`) !== null;
 }
 
 function describe(element: Element, box: Box, context: DistillContext): PageElement {
@@ -95,14 +102,30 @@ function describe(element: Element, box: Box, context: DistillContext): PageElem
   return pageElement;
 }
 
+export type DistillResult = {
+  pageMap: PageMap;
+  /** Snapshot id to live element. Never leaves the browser. */
+  byId: Map<string, Element>;
+  /**
+   * Identity of this page state, taken over every element found rather than the
+   * ones that survived the prompt budget. The budget exists to bound a request;
+   * letting it decide what counts as the same page would mean a scroll that
+   * changes which elements make the cut reads as the user making progress.
+   */
+  signature: string;
+};
+
 /**
- * DOM to PageMap.
+ * DOM to PageMap, keeping the element references.
  *
- * Read-only by contract: nothing here mutates the host page, which is what lets
- * the same function run in the extension, in the SDK and against a saved fixture
- * in a test.
+ * The id-to-node map is what turns the model's answer back into something the
+ * overlay can point at. It stays in the browser: the server sees ids, we keep
+ * the nodes.
  */
-export function distill(doc: Document, options: DistillOptions = {}): PageMap {
+export function distillWithElements(
+  doc: Document,
+  options: DistillOptions = {},
+): DistillResult {
   const { maxElements = DEFAULT_MAX_ELEMENTS } = options;
 
   const modal = findActiveModal(doc.body);
@@ -116,19 +139,27 @@ export function distill(doc: Document, options: DistillOptions = {}): PageMap {
   const scroll = options.scroll ?? scrollOffsetOf(doc);
 
   const described: PageElement[] = [];
+  const nodeOf = new Map<PageElement, Element>();
+
   for (const element of context.root.querySelectorAll(CANDIDATE_SELECTOR)) {
-    if (isOwnOverlay(element)) continue;
+    if (isOwnSurface(element)) continue;
     const box = boxOf(element);
     if (!isVisible(element, box, scroll)) continue;
-    described.push(describe(element, box, context));
+
+    const entry = describe(element, box, context);
+    described.push(entry);
+    nodeOf.set(entry, element);
   }
 
   // Ids are handed out after trimming so the numbered list in the prompt has no
   // gaps. They are snapshot-scoped; anything persisted stores a fingerprint.
-  const elements = applyBudget(described, maxElements).map((element, index) => ({
-    ...element,
-    id: `e${index}`,
-  }));
+  const byId = new Map<string, Element>();
+  const elements = applyBudget(described, maxElements).map((element, index) => {
+    const id = `e${index}`;
+    const node = nodeOf.get(element);
+    if (node) byId.set(id, node);
+    return { ...element, id };
+  });
 
   const pageMap: PageMap = {
     url: doc.location?.pathname ?? '/',
@@ -144,5 +175,20 @@ export function distill(doc: Document, options: DistillOptions = {}): PageMap {
     if (name) pageMap.activeModal = name;
   }
 
-  return pageMap;
+  return {
+    pageMap,
+    byId,
+    signature: pageSignature({ ...pageMap, elements: described }),
+  };
+}
+
+/**
+ * DOM to PageMap.
+ *
+ * Read-only by contract: nothing here mutates the host page, which is what lets
+ * the same function run in the extension, in the SDK and against a saved fixture
+ * in a test.
+ */
+export function distill(doc: Document, options: DistillOptions = {}): PageMap {
+  return distillWithElements(doc, options).pageMap;
 }
