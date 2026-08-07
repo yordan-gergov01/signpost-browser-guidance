@@ -9,7 +9,7 @@ This is a proof of concept, and it is wired to a real model backend rather than 
 scripted mock. Every step in the demo is a live call to an OpenAI model, and the
 video shows it working end to end against a real page.
 
-[Video walkthrough](TODO)
+[Video walkthrough](https://github.com/yordan-gergov01/hintora-browser-first-poc/releases/download/v0.1.0/hintora_PoC_walkthrough.mp4)
 
 This document is about the decisions rather than the code. What I chose to build,
 what I chose not to, why, and what the same system would need to become something a
