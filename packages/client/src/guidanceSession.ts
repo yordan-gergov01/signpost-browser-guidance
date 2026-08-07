@@ -47,6 +47,8 @@ export type GuidanceSurface = {
   showMessage: (message: string) => void;
   /** The step really happened: it belongs on the route the user walked. */
   confirmStep: () => void;
+  /** The screen changed, so the marks left on the old one mean nothing. */
+  clearRoute: () => void;
   complete: (message: string) => void;
   showBlocked: (reason: string) => void;
   hide: () => void;
@@ -95,6 +97,30 @@ type Attempt = {
   outcome: AttemptOutcome;
 };
 
+/**
+ * Controls where clicking is the start of the action rather than the action.
+ *
+ * A select opens a list the browser draws outside the document, and a text field
+ * does nothing at all until something is typed into it. Neither moves the page on
+ * the click, so the inert verdict would fire while the user is still mid-action,
+ * take the one control they actually need out of the list, and leave the loop
+ * hunting for a replacement that does not exist.
+ */
+const FIELD_TAGS = new Set(['input', 'select', 'textarea']);
+const FIELD_ROLES = new Set([
+  'textbox',
+  'searchbox',
+  'combobox',
+  'listbox',
+  'spinbutton',
+]);
+
+function takesInput(element: PageElement | undefined, action: GuideResponse['action']) {
+  if (action === 'type' || action === 'select') return true;
+  if (!element) return false;
+  return FIELD_TAGS.has(element.tag) || FIELD_ROLES.has(element.role);
+}
+
 const OUTCOME_NOTE: Record<AttemptOutcome, string> = {
   'no-effect': 'nothing on the page changed',
   'not-it': 'the user says this is not what they meant',
@@ -113,6 +139,7 @@ export function createGuidance(options: GuidanceOptions): Guidance {
   let currentInstruction = '';
   let currentKey: string | null = null;
   let currentState = '';
+  let currentTakesInput = false;
   let safety: SafetyReport | null = null;
   let unwatch: (() => void) | null = null;
   let inFlight: AbortController | null = null;
@@ -120,6 +147,10 @@ export function createGuidance(options: GuidanceOptions): Guidance {
   /** The page state the attempts below were made against. */
   let signature = '';
   let attempts: Attempt[] = [];
+  /** Every control the user actually completed, keyed by the page state it was on. */
+  let walked = new Map<string, Set<string>>();
+  /** The control the user completed on the step immediately before this one. */
+  let lastCompletedKey: string | null = null;
   let resumeTimer = 0;
   let observedAt = 0;
   let activity: PageActivity | null = null;
@@ -171,6 +202,32 @@ export function createGuidance(options: GuidanceOptions): Guidance {
     report();
   }
 
+  /** Model copy does not always come back punctuated, and we append to it. */
+  function sentence(text: string): string {
+    return /[.!?]$/.test(text.trim()) ? text.trim() : `${text.trim()}.`;
+  }
+
+  function markWalked(): void {
+    if (!currentKey) return;
+    const onThisPage = walked.get(signature) ?? new Set<string>();
+    onThisPage.add(currentKey);
+    walked.set(signature, onThisPage);
+    lastCompletedKey = currentKey;
+  }
+
+  /**
+   * The user is being sent back to a control they already completed, on a page
+   * that looks exactly as it did when they completed it. The flow has come full
+   * circle, which in practice means the goal was reached a step ago and the model
+   * is answering the original question again rather than noticing.
+   *
+   * Treating that as finished is the honest reading. Pointing at it again would
+   * walk the user round the same loop for as long as they let it.
+   */
+  function alreadyWalked(key: string | null): boolean {
+    return key !== null && (walked.get(signature)?.has(key) ?? false);
+  }
+
   function record(outcome: AttemptOutcome): void {
     if (!currentKey) return;
     attempts.push({ key: currentKey, instruction: currentInstruction, outcome });
@@ -200,6 +257,28 @@ export function createGuidance(options: GuidanceOptions): Guidance {
   ): void {
     currentKey = description ? elementKey(description) : null;
     currentState = description ? elementState(description) : '';
+    currentTakesInput = takesInput(description, response.action);
+
+    if (response.status === 'step' && alreadyWalked(currentKey)) {
+      surface.complete('That is everything for this one.');
+      finish('done');
+      return;
+    }
+
+    // Sending the user back to the control they just finished with, on a page
+    // that has moved on since. That is the model repeating itself rather than a
+    // flow closing, so it gets one more pass with that control out of reach
+    // instead of being shown as a step.
+    if (
+      response.status === 'step' &&
+      currentKey !== null &&
+      currentKey === lastCompletedKey
+    ) {
+      currentInstruction = response.instruction;
+      record('already-done');
+      void observe();
+      return;
+    }
 
     // A confident wrong answer costs more than an honest "not sure", so below the
     // threshold nothing is highlighted. It gets words instead.
@@ -211,7 +290,7 @@ export function createGuidance(options: GuidanceOptions): Guidance {
     if (response.status === 'not_on_this_page') {
       wait(
         response.suggestedNavigation
-          ? `${response.instruction} Try ${response.suggestedNavigation}.`
+          ? `${sentence(response.instruction)} Try ${response.suggestedNavigation}.`
           : response.instruction,
       );
       return;
@@ -284,6 +363,10 @@ export function createGuidance(options: GuidanceOptions): Guidance {
     // A different page state wipes the slate: what was inert on the last screen
     // says nothing about this one.
     if (current !== signature) {
+      // The route is drawn at fixed points on the screen. Once the screen behind
+      // it is a different screen, every mark on it points at whatever moved into
+      // that spot, so the trail is wiped rather than left to lie.
+      if (signature !== '') surface.clearRoute();
       signature = current;
       attempts = [];
     }
@@ -371,6 +454,14 @@ export function createGuidance(options: GuidanceOptions): Guidance {
       busy: () => activity?.busy() ?? false,
       onChanged: confirm,
       onInert: () => {
+        // A field the user has only opened or focused is not a dead control, so
+        // the step stays on screen and we keep watching for the value to land.
+        // They can still say they are done or stop; nothing here is stuck.
+        if (currentTakesInput) {
+          verify();
+          return;
+        }
+
         record('no-effect');
         void observe('That did not do anything. Looking for another way.');
       },
@@ -380,6 +471,7 @@ export function createGuidance(options: GuidanceOptions): Guidance {
   /** The page moved after the user acted. That, and only that, closes a step. */
   function confirm(): void {
     clearPending();
+    markWalked();
     if (currentInstruction) completed.push(currentInstruction);
     stepIndex += 1;
     surface.confirmStep();
@@ -422,8 +514,11 @@ export function createGuidance(options: GuidanceOptions): Guidance {
       currentInstruction = '';
       currentKey = null;
       currentState = '';
+      currentTakesInput = false;
       signature = '';
       attempts = [];
+      walked = new Map();
+      lastCompletedKey = null;
       actedEarly = false;
       cost.reset();
 
@@ -450,12 +545,16 @@ export function createGuidance(options: GuidanceOptions): Guidance {
     },
 
     skip() {
-      if (state !== 'guiding') return;
+      // Also from verifying: the note and its three replies stay on screen while
+      // we watch for a result, so a user waiting on a field that will never
+      // report one has to be able to say so and move on.
+      if (state !== 'guiding' && state !== 'verifying') return;
       clearPending();
 
       // Their word, not the page's. Nothing is going to change, so there is
       // nothing to confirm against; what matters is not offering it again.
       record('already-done');
+      markWalked();
       if (currentInstruction) completed.push(currentInstruction);
       stepIndex += 1;
       surface.confirmStep();
@@ -463,7 +562,7 @@ export function createGuidance(options: GuidanceOptions): Guidance {
     },
 
     reject() {
-      if (state !== 'guiding') return;
+      if (state !== 'guiding' && state !== 'verifying') return;
       clearPending();
 
       // Restarting the session here would put the same question to the same page

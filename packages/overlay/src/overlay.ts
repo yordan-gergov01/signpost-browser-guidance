@@ -198,6 +198,7 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
       ],
     });
     note.centre(contentCentreX(document));
+    spotlight.dimOnly();
   }
 
   function onKeyDown(event: KeyboardEvent): void {
@@ -216,6 +217,9 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
       clearStage();
       note.hide();
       note.clearRoute();
+      // The page recedes the moment the guide is in use, question included. The
+      // layer either has the screen or it does not; half of it is neither.
+      spotlight.dimOnly();
       bar.open(suggestions, contentCentreX(document));
     },
 
@@ -230,6 +234,13 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
         actions: [{ label: 'Stop', onClick: endSession }],
       });
       note.centre(contentCentreX(document));
+      // The page recedes for a message too. Without it the note reads as a stray
+      // card the application grew rather than as the guide speaking.
+      spotlight.dimOnly();
+    },
+
+    clearRoute() {
+      note.clearRoute();
     },
 
     confirmStep() {
@@ -263,6 +274,9 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
         actions: [{ label: 'Close', onClick: endSession }],
       });
       note.centre(contentCentreX(document));
+      // The page recedes for a message too. Without it the note reads as a stray
+      // card the application grew rather than as the guide speaking.
+      spotlight.dimOnly();
     },
 
     complete(message) {
@@ -274,6 +288,7 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
         actions: [],
       });
       note.centre(contentCentreX(document));
+      spotlight.dimOnly();
       // Say it, then get off the screen. A guide that stays open after the job
       // is done has turned back into a widget.
       lingerTimer = window.setTimeout(() => api.hide(), COMPLETE_LINGER_MS);
@@ -288,6 +303,9 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
         actions: [{ label: 'Close', onClick: endSession }],
       });
       note.centre(contentCentreX(document));
+      // The page recedes for a message too. Without it the note reads as a stray
+      // card the application grew rather than as the guide speaking.
+      spotlight.dimOnly();
     },
 
     hide() {

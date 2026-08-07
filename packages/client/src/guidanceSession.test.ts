@@ -88,6 +88,7 @@ const surface = {
   showStep: vi.fn(),
   showMessage: vi.fn(),
   confirmStep: vi.fn(),
+  clearRoute: vi.fn(),
   complete: vi.fn(),
   showBlocked: vi.fn(),
   hide: vi.fn(),
@@ -177,8 +178,12 @@ suite('a control that does nothing', () => {
   });
 
   test('gives up honestly rather than working through the page', async () => {
+    // Only ever offers something clickable: a field is never called inert, which
+    // is a different rule tested separately.
     reply = (request) => {
-      const [first] = request.pageMap.elements;
+      const first = request.pageMap.elements.find(
+        (element) => element.tag === 'button' || element.tag === 'a',
+      );
       return first ? step(first.id, `Click ${first.name}`) : elsewhere();
     };
 
@@ -304,6 +309,125 @@ suite('a control that works', () => {
     await vi.advanceTimersByTimeAsync(700);
 
     expect(surface.confirmStep).toHaveBeenCalledTimes(1);
+  });
+});
+
+suite('a control the user has to fill in', () => {
+  const pointAtSearch = (request: GuideRequest): GuideResult => {
+    const field = named(request, 'Search Business');
+    return field ? step(field, 'Choose a value in the search box') : elsewhere();
+  };
+
+  // Clicking a select opens a list the browser draws outside the document, and a
+  // text field does nothing until something is typed. Calling either one dead
+  // takes the control the user actually needs out of the list.
+  test('is never called inert just because the click changed nothing', async () => {
+    reply = pointAtSearch;
+
+    await guidance.start('filter my deals');
+    guidance.advance();
+    await vi.advanceTimersByTimeAsync(12_000);
+
+    expect(requests).toHaveLength(1);
+    expect(guidance.state()).toBe('verifying');
+    expect(surface.confirmStep).not.toHaveBeenCalled();
+  });
+
+  // Without this the note sits there with three replies that do nothing, and the
+  // only way out is the Stop button.
+  test('can still be answered while the session is waiting on the value', async () => {
+    reply = pointAtSearch;
+
+    await guidance.start('filter my deals');
+    guidance.advance();
+    await vi.advanceTimersByTimeAsync(12_000);
+    expect(guidance.state()).toBe('verifying');
+
+    guidance.skip();
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(surface.confirmStep).toHaveBeenCalledTimes(1);
+    expect(requests).toHaveLength(2);
+  });
+
+  test('can be rejected while the session is waiting on the value', async () => {
+    reply = pointAtSearch;
+
+    await guidance.start('filter my deals');
+    guidance.advance();
+    await vi.advanceTimersByTimeAsync(12_000);
+
+    guidance.reject();
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(requests).toHaveLength(2);
+    expect(names(requests[1]!)).not.toContain('Search Business');
+  });
+
+  test('closes the step when the value finally lands', async () => {
+    reply = pointAtSearch;
+
+    await guidance.start('filter my deals');
+    guidance.advance();
+    await vi.advanceTimersByTimeAsync(12_000);
+
+    (document.querySelector('#search') as HTMLInputElement).value = 'discovery';
+    document.querySelector('main')!.setAttribute('class', 'rerendered');
+    await vi.advanceTimersByTimeAsync(700);
+
+    expect(surface.confirmStep).toHaveBeenCalledTimes(1);
+  });
+});
+
+suite('reaching the end', () => {
+  // The model keeps answering the original question because the page is back to
+  // where it started. Without this the user is walked round the same loop for as
+  // long as they keep clicking.
+  test('stops instead of guiding the same step a second time', async () => {
+    const account = document.querySelector('#account')!;
+
+    await guidance.start('delete my account');
+    guidance.advance();
+
+    account.setAttribute('aria-expanded', 'true');
+    await vi.advanceTimersByTimeAsync(600);
+    expect(surface.confirmStep).toHaveBeenCalledTimes(1);
+
+    // The user acts again and the application lands back where it started, so
+    // the model answers the original question a second time.
+    guidance.advance();
+    account.removeAttribute('aria-expanded');
+    await vi.advanceTimersByTimeAsync(600);
+
+    expect(surface.complete).toHaveBeenCalledTimes(1);
+    expect(guidance.state()).toBe('done');
+  });
+
+  // A toggle the user just flipped changes the page state, so the full-circle
+  // check cannot see it. Pointing at it again is the model repeating itself.
+  test('does not send the user back to the control they just finished with', async () => {
+    const account = document.querySelector('#account')!;
+
+    await guidance.start('delete my account');
+    guidance.advance();
+
+    account.setAttribute('aria-expanded', 'true');
+    await vi.advanceTimersByTimeAsync(600);
+
+    const offered = requests.at(-1);
+    expect(names(offered!)).not.toContain('Account menu');
+    expect(offered?.tried ?? []).toEqual([]);
+  });
+
+  test('still guides a control it has not walked before', async () => {
+    await guidance.start('delete my account');
+    guidance.advance();
+
+    document.querySelector('#account')!.setAttribute('aria-expanded', 'true');
+    await vi.advanceTimersByTimeAsync(600);
+
+    expect(guidance.state()).not.toBe('done');
+    expect(surface.showStep.mock.calls.length).toBeGreaterThan(1);
   });
 });
 

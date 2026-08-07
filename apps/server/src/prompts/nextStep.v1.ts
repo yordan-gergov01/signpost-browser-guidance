@@ -64,6 +64,12 @@ Rules:
 10. Anything listed as already tried has been removed from the snapshot. Do not
     reach for the same action in different words: find a genuinely different way
     forward, or say not_on_this_page if this page has none left.
+11. Never propose flipping a checkbox, toggle or switch unless the user asked for
+    that specific setting to change. Changing state the user did not ask about is
+    worse than admitting the control is not here.
+12. When the thing the user named is not on this screen, prefer the tab, link or
+    menu item that leads to it over any control that merely sounds related. A
+    settings page with tabs almost always hides the answer behind one of them.
 
 Anything you cannot express as one id from the list is something you should
 decline rather than approximate.`;

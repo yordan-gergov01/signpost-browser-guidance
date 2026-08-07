@@ -56,6 +56,12 @@ export type Overlay = {
   confirmStep: () => void;
   /** No target: not on this page, or the step could not be resolved. */
   showMessage: (message: string, step?: Partial<OverlayStep>) => void;
+  /**
+   * Forget the route walked so far. A ghost pin is a fixed point on the screen,
+   * so once the screen behind it changes it is pointing at whatever happens to
+   * be there now, which is worse than showing nothing.
+   */
+  clearRoute: () => void;
   /** Final confirmation, then the guide takes itself off screen. */
   complete: (message: string) => void;
   showBlocked: (reason: string) => void;

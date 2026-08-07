@@ -11,6 +11,8 @@ export type Spotlight = {
   moveTo: (rect: DOMRect) => void;
   /** Repositions with no animation, for scroll and resize. */
   snapTo: (rect: DOMRect) => void;
+  /** Dims the page with nothing cut out, for a message with no target. */
+  dimOnly: () => void;
   clear: () => void;
 };
 
@@ -162,6 +164,21 @@ export function createSpotlight(): Spotlight {
       cancelAnimationFrame(animation);
       reveal();
       paint(frameOf(rect));
+    },
+
+    dimOnly() {
+      cancelAnimationFrame(animation);
+      ring.classList.add('hidden');
+      ring.classList.remove('ring--arrived');
+      trail.setAttribute('opacity', '0');
+
+      // A hole with no area leaves the sheet solid. The page still recedes, which
+      // is what says the guide is speaking, but nothing is singled out because
+      // there is nothing to single out yet.
+      hole.setAttribute('width', '0');
+      hole.setAttribute('height', '0');
+      current = null;
+      root.classList.remove('hidden');
     },
 
     clear() {

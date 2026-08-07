@@ -49,6 +49,48 @@ function isGrounded(response: GuideResponse, pageMap: PromptPageMap): boolean {
 
 export type Selector = ReturnType<typeof createSelector>;
 
+/**
+ * The words and the id have to agree.
+ *
+ * A weaker tier will write a perfectly correct sentence naming one control and
+ * then hand back the id of another, which is the worst shape of wrong answer we
+ * can get: the instruction reads right, so the user trusts it, and the highlight
+ * lands on something else entirely. Grounding does not catch it, because the id
+ * is a real id.
+ *
+ * Only quoted names are compared, because that is the one part of the sentence
+ * the model is copying from the snapshot rather than composing.
+ */
+export function isConsistent(response: GuideResponse, pageMap: PromptPageMap): boolean {
+  if (response.status !== 'step' || !response.elementId) return true;
+
+  const chosen = pageMap.elements.find((element) => element.id === response.elementId);
+  if (!chosen) return true;
+
+  const quoted = Array.from(response.instruction.matchAll(/['"]([^'"]{2,60})['"]/g)).map(
+    (match) => (match[1] ?? '').trim().toLowerCase(),
+  );
+  if (quoted.length === 0) return true;
+
+  const name = chosen.name.trim().toLowerCase();
+  if (
+    name !== '' &&
+    quoted.some((phrase) => name.includes(phrase) || phrase.includes(name))
+  ) {
+    return true;
+  }
+
+  // The sentence names a control that is on this page and is not the one it
+  // chose. Anything vaguer than that is left alone: the model is allowed to
+  // describe a control in words that are not its label.
+  return !pageMap.elements.some(
+    (element) =>
+      element.id !== chosen.id &&
+      element.name !== '' &&
+      quoted.includes(element.name.trim().toLowerCase()),
+  );
+}
+
 export function createSelector(apiKey: string) {
   const client = new OpenAI({ apiKey });
 
@@ -127,6 +169,7 @@ export function createSelector(apiKey: string) {
         const usable =
           attempt.parsed.success &&
           isGrounded(attempt.parsed.data, pageMap) &&
+          isConsistent(attempt.parsed.data, pageMap) &&
           !bailedOnNavigation &&
           attempt.parsed.data.confidence > ESCALATE_BELOW_CONFIDENCE;
 
@@ -146,15 +189,24 @@ export function createSelector(apiKey: string) {
                 suggestedNavigation: null,
               };
 
-          const grounded = isGrounded(response, pageMap)
-            ? response
-            : {
+          const unusable = !isGrounded(response, pageMap)
+            ? 'model returned an id that is not in the snapshot'
+            : !isConsistent(response, pageMap)
+              ? 'instruction named one control and the id pointed at another'
+              : null;
+
+          // Both failures end the same way. Highlighting something the sentence
+          // does not describe is worse than admitting we are not sure, so the
+          // answer is downgraded rather than drawn.
+          const grounded = unusable
+            ? {
                 ...response,
                 status: 'unclear' as const,
                 elementId: null,
                 confidence: 0,
-                reasoning: 'model returned an id that is not in the snapshot',
-              };
+                reasoning: unusable,
+              }
+            : response;
 
           return {
             response: grounded,

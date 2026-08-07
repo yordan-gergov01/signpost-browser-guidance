@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { boot } from '@hintora/sdk/boot';
 import { App } from '@/app/App';
-import { createCostHud } from '@/guide/costHud';
 import '@/styles.css';
 
 const container = document.getElementById('root');
@@ -24,13 +23,13 @@ const SUGGESTIONS = [
 // no styles and no React tree with Business CRM. The endpoint comes off the document
 // root in index.html; this call is the four lines a customer writes.
 const endpoint = import.meta.env['VITE_GUIDE_ENDPOINT'];
-const hud = import.meta.env.DEV ? createCostHud() : null;
 
 const hintora = boot({
   suggestions: SUGGESTIONS,
   ...(endpoint ? { endpoint } : {}),
+  // Nothing on screen. Telemetry is parked on the window for a developer to read
+  // from the console, because the demo should look like the customer's product.
   onTelemetry: (event) => {
-    hud?.(event);
     if (import.meta.env.DEV) {
       (window as Window & { hintoraTelemetry?: unknown }).hintoraTelemetry = event;
     }

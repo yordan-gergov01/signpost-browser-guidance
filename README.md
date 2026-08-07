@@ -11,8 +11,6 @@ video shows it working end to end against a real page.
 
 [Video walkthrough](TODO)
 
-![Demo](docs/demo.gif)
-
 This document is about the decisions rather than the code. What I chose to build,
 what I chose not to, why, and what the same system would need to become something a
 software company could deploy to its customers.
@@ -330,8 +328,9 @@ stronger one only when an answer is actually bad, to bound the size of every req
 regardless of how large the page is, to cap what a single session can spend and
 enforce that on the server rather than in the browser, and to make sure a page that
 updates on its own cannot quietly spend a session by itself. Every call is accounted
-for from the first one rather than estimated afterwards, and the demo shows that
-running live in the corner of the screen.
+for from the first one rather than estimated afterwards, and the running total for a
+session is available to the host application rather than reconstructed from logs
+later.
 
 I also chose the model family for reproducibility rather than for the last increment
 of savings. Being able to reproduce a session exactly is how a wrong highlight gets
@@ -458,8 +457,7 @@ npm run dev:all
 
 Open http://localhost:5173, press Ctrl+K or use the demo application's own Help
 button, and try "change my notification email", "export my contacts", or "how do I
-delete my account". A panel in the bottom left reports live session telemetry while
-it runs.
+delete my account".
 
 `npm test` runs the unit suite and `npm run eval` runs the reliability and red team
 comparison described above.
