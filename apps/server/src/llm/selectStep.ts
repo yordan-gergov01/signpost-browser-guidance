@@ -47,6 +47,8 @@ function isGrounded(response: GuideResponse, pageMap: PromptPageMap): boolean {
   return pageMap.elements.some((element) => element.id === response.elementId);
 }
 
+export type Selector = ReturnType<typeof createSelector>;
+
 export function createSelector(apiKey: string) {
   const client = new OpenAI({ apiKey });
 

@@ -33,7 +33,7 @@ export default tseslint.config(
   },
 
   {
-    files: ['apps/mock-app/**/*.tsx', 'apps/extension/**/*.tsx'],
+    files: ['apps/mock-app/**/*.tsx'],
     plugins: { 'react-hooks': reactHooks },
     rules: reactHooks.configs.recommended.rules,
   },

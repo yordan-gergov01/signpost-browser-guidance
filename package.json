@@ -14,9 +14,11 @@
   "scripts": {
     "dev": "npm run dev --workspace apps/mock-app",
     "dev:server": "npm run dev --workspace apps/server",
+    "dev:all": "concurrently -n server,app -c blue,magenta \"npm:dev:server\" \"npm:dev\"",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "vitest run --passWithNoTests",
+    "eval": "vitest run evals",
     "test:watch": "vitest",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^22.18.12",
+    "concurrently": "^10.0.4",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.1.0",

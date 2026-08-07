@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { boot } from '@hintora/sdk/boot';
 import { App } from '@/app/App';
+import { createCostHud } from '@/guide/costHud';
 import '@/styles.css';
 
 const container = document.getElementById('root');
@@ -23,13 +24,16 @@ const SUGGESTIONS = [
 // no styles and no React tree with Acme CRM. The endpoint comes off the document
 // root in index.html; this call is the four lines a customer writes.
 const endpoint = import.meta.env['VITE_GUIDE_ENDPOINT'];
+const hud = import.meta.env.DEV ? createCostHud() : null;
 
 const hintora = boot({
   suggestions: SUGGESTIONS,
   ...(endpoint ? { endpoint } : {}),
   onTelemetry: (event) => {
-    if (!import.meta.env.DEV) return;
-    (window as Window & { hintoraTelemetry?: unknown }).hintoraTelemetry = event;
+    hud?.(event);
+    if (import.meta.env.DEV) {
+      (window as Window & { hintoraTelemetry?: unknown }).hintoraTelemetry = event;
+    }
   },
 });
 

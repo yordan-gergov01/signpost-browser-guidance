@@ -33,7 +33,3 @@ export function readEnv(): Env {
       .filter(Boolean),
   };
 }
-
-export function hasOpenAiKey(): boolean {
-  return Boolean(process.env['OPENAI_API_KEY']);
-}
