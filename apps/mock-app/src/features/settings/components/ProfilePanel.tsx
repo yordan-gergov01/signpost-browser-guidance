@@ -21,7 +21,7 @@ export function ProfilePanel() {
       >
         <div className="space-y-4">
           <Field label="Full name" defaultValue="Jane Doe" />
-          <Field label="Email address" type="email" defaultValue="jane@acme.test" />
+          <Field label="Email address" type="email" defaultValue="jane@business.test" />
           <Field label="Job title" defaultValue="Account executive" />
         </div>
       </Panel>

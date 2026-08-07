@@ -1,7 +1,7 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
 import { resolveConfig, resolveEndpoint } from '@hintora/sdk/config';
 
-const BASE = 'https://app.acme.test/contacts';
+const BASE = 'https://app.business.test/contacts';
 
 function scriptWith(attributes: Record<string, string>): Element {
   const element = document.createElement('script');
@@ -13,14 +13,14 @@ function scriptWith(attributes: Record<string, string>): Element {
 
 suite('resolveEndpoint', () => {
   test('accepts an absolute https endpoint', () => {
-    expect(resolveEndpoint('https://guide.acme.test/hintora', BASE)).toBe(
-      'https://guide.acme.test/hintora',
+    expect(resolveEndpoint('https://guide.business.test/hintora', BASE)).toBe(
+      'https://guide.business.test/hintora',
     );
   });
 
   test('resolves a same-origin relative endpoint against the page', () => {
     expect(resolveEndpoint('/hintora/guide', BASE)).toBe(
-      'https://app.acme.test/hintora/guide',
+      'https://app.business.test/hintora/guide',
     );
   });
 
@@ -57,10 +57,10 @@ suite('resolveConfig', () => {
   test('reads the endpoint from the document root', () => {
     document.documentElement.setAttribute(
       'data-hintora-endpoint',
-      'https://guide.acme.test/hintora',
+      'https://guide.business.test/hintora',
     );
     expect(resolveConfig(document, null)?.endpoint).toBe(
-      'https://guide.acme.test/hintora',
+      'https://guide.business.test/hintora',
     );
   });
 

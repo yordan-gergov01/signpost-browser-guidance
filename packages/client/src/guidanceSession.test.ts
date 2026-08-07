@@ -12,7 +12,7 @@ const PAGE = `
   <body>
     <header>
       <a href="/settings">Settings</a>
-      <input id="search" aria-label="Search Acme" />
+      <input id="search" aria-label="Search Business" />
       <button id="account" aria-label="Account menu">JD</button>
     </header>
     <main>
@@ -292,7 +292,7 @@ suite('a control that works', () => {
 
   test('is confirmed by the user typing into the field they were sent to', async () => {
     reply = (request) => {
-      const field = named(request, 'Search Acme');
+      const field = named(request, 'Search Business');
       return field ? step(field, 'Type into the search box') : elsewhere();
     };
 

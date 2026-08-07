@@ -9,7 +9,7 @@ export function SavedReportsPanel() {
       description="Scheduled exports and shared views"
       actions={
         <>
-          {/* Acme's own contextual help. The attribute is the whole integration:
+          {/* Business's own contextual help. The attribute is the whole integration:
               no Hintora markup, no Hintora styling, their button. */}
           <Button variant="ghost" data-hintora-trigger="export my contacts">
             How do I export?

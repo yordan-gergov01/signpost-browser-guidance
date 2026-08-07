@@ -37,14 +37,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             </svg>
             <input
               type="search"
-              aria-label="Search Acme CRM"
+              aria-label="Search Business CRM"
               placeholder="Search"
               className="w-full rounded-lg border border-ink-200 bg-ink-50 py-1.5 pl-8 pr-3 text-sm text-ink-800 outline-none transition placeholder:text-ink-400 focus:border-accent-500 focus:bg-white focus:ring-4 focus:ring-accent-100"
             />
           </div>
 
           <div className="ml-auto flex items-center gap-1.5">
-            {/* Acme's Help button, wired to Hintora by one attribute. There is no
+            {/* Business's Help button, wired to Hintora by one attribute. There is no
                 Hintora affordance anywhere on this page; the host owns the door. */}
             <button
               type="button"

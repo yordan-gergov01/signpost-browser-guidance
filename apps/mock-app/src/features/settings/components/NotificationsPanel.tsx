@@ -18,7 +18,7 @@ export function NotificationsPanel() {
         <Field
           label="Notification email"
           type="email"
-          defaultValue="jane@acme.test"
+          defaultValue="jane@business.test"
           data-testid="notification-email"
           hint="This can differ from your login email."
         />
@@ -40,7 +40,7 @@ export function NotificationsPanel() {
         <Toggle
           name="product-updates"
           label="Product updates"
-          description="Occasional news about new Acme features."
+          description="Occasional news about new Business features."
         />
       </Panel>
     </>

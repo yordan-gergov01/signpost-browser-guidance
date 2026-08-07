@@ -13,10 +13,10 @@ export function Sidebar() {
     >
       <div className="mb-0 hidden items-center gap-2.5 px-2 pb-4 md:flex">
         <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 text-sm font-bold text-white shadow-card">
-          A
+          B
         </span>
         <span className="text-[15px] font-semibold tracking-tight text-ink-900">
-          Acme CRM
+          Business CRM
         </span>
       </div>
 
@@ -51,7 +51,7 @@ export function Sidebar() {
           <span className="block truncate text-sm font-medium text-ink-800">
             Jane Doe
           </span>
-          <span className="block truncate text-xs text-ink-500">Acme Industries</span>
+          <span className="block truncate text-xs text-ink-500">Business Industries</span>
         </span>
       </div>
     </nav>

@@ -5,7 +5,7 @@ import { mountHtml, readFixture } from '@hintora/core/testing/domFixtures';
 import { stubLayout } from '@hintora/core/testing/stubLayout';
 import type { CompressionReport } from '@hintora/core/distiller/stats';
 
-const FIXTURES = ['acme-contacts.html', 'edge-cases.html', 'modal.html'] as const;
+const FIXTURES = ['business-contacts.html', 'edge-cases.html', 'modal.html'] as const;
 
 function report(fixture: string): CompressionReport {
   const html = readFixture(import.meta.url, `fixtures/${fixture}`);
@@ -21,7 +21,7 @@ suite('compression', () => {
   });
 
   test('compresses markup produced by a real component tree', () => {
-    expect(report('acme-contacts.html').reduction).toBeGreaterThan(0.6);
+    expect(report('business-contacts.html').reduction).toBeGreaterThan(0.6);
   });
 
   /**
@@ -37,7 +37,7 @@ suite('compression', () => {
   });
 
   test('geometry is stripped on the path to the model', () => {
-    const measured = report('acme-contacts.html');
+    const measured = report('business-contacts.html');
     expect(measured.pageMapBytes - measured.promptBytes).toBeGreaterThan(0);
   });
 });

@@ -21,7 +21,7 @@ const SUGGESTIONS = [
 ];
 
 // Injected alongside the application, never into it. The guide shares no state,
-// no styles and no React tree with Acme CRM. The endpoint comes off the document
+// no styles and no React tree with Business CRM. The endpoint comes off the document
 // root in index.html; this call is the four lines a customer writes.
 const endpoint = import.meta.env['VITE_GUIDE_ENDPOINT'];
 const hud = import.meta.env.DEV ? createCostHud() : null;

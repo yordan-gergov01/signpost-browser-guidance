@@ -25,11 +25,11 @@ function named(pageMap: PageMap, name: string): PageElement {
 }
 
 suite('distill', () => {
-  suite('acme contacts fixture', () => {
+  suite('business contacts fixture', () => {
     let pageMap: PageMap;
 
     beforeEach(() => {
-      pageMap = load('acme-contacts.html');
+      pageMap = load('business-contacts.html');
     });
 
     test('produces a map that satisfies the schema', () => {
@@ -78,7 +78,7 @@ suite('distill', () => {
     });
 
     test('falls back to a nominal viewport when the view reports no size', () => {
-      mountHtml(readFixture(import.meta.url, 'fixtures/acme-contacts.html'));
+      mountHtml(readFixture(import.meta.url, 'fixtures/business-contacts.html'));
       stubLayout(document);
       const collapsed = distill(document, { viewport: { width: 0, height: 0 } });
       expect(collapsed.elements.some((element) => element.inViewport)).toBe(true);
@@ -264,7 +264,7 @@ suite('distill', () => {
 
     test('leaks no personal data from the fixture into the map', () => {
       const serialized = JSON.stringify(pageMap);
-      expect(serialized).not.toContain('jane@acme.test');
+      expect(serialized).not.toContain('jane@business.test');
       expect(serialized).not.toContain('4111');
       expect(serialized).not.toContain('900123');
     });
