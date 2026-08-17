@@ -1,5 +1,5 @@
-import { accessibleNameOf } from '@hintora/core/distiller/accessibleName';
-import { isSemanticallyVisible } from '@hintora/core/distiller/visibility';
+import { accessibleNameOf } from '@signpost/core/distiller/accessibleName';
+import { isSemanticallyVisible } from '@signpost/core/distiller/visibility';
 
 const MODAL_SELECTOR =
   '[role="dialog"],[role="alertdialog"],[aria-modal="true"],dialog[open]';

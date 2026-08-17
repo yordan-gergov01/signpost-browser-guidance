@@ -1,5 +1,5 @@
-import { isInteractiveTag } from '@hintora/core/distiller/selectors';
-import type { PageElement } from '@hintora/core/types/pageMap';
+import { isInteractiveTag } from '@signpost/core/distiller/selectors';
+import type { PageElement } from '@signpost/core/types/pageMap';
 
 export const DEFAULT_MAX_ELEMENTS = 120;
 

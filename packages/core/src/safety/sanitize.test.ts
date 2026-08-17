@@ -1,10 +1,10 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
-import { distill } from '@hintora/core/distiller/distill';
-import { sanitizePageMap, type SafetyReport } from '@hintora/core/safety/sanitize';
-import { totalRedactions } from '@hintora/core/redaction/redact';
-import { mountHtml, readFixture } from '@hintora/core/testing/domFixtures';
-import { stubLayout } from '@hintora/core/testing/stubLayout';
-import type { PageMap } from '@hintora/core/types/pageMap';
+import { distill } from '@signpost/core/distiller/distill';
+import { sanitizePageMap, type SafetyReport } from '@signpost/core/safety/sanitize';
+import { totalRedactions } from '@signpost/core/redaction/redact';
+import { mountHtml, readFixture } from '@signpost/core/testing/domFixtures';
+import { stubLayout } from '@signpost/core/testing/stubLayout';
+import type { PageMap } from '@signpost/core/types/pageMap';
 
 suite('sanitizePageMap', () => {
   let pageMap: PageMap;

@@ -1,6 +1,6 @@
 import { describe as suite, expect, test } from 'vitest';
-import { assessPage } from '@hintora/core/safety/sensitivePage';
-import { mountHtml } from '@hintora/core/testing/domFixtures';
+import { assessPage } from '@signpost/core/safety/sensitivePage';
+import { mountHtml } from '@signpost/core/testing/domFixtures';
 
 function pageWith(markup: string, pathname = '/dashboard'): Document {
   mountHtml(`<html><head><title>t</title></head><body>${markup}</body></html>`);

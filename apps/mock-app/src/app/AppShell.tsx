@@ -44,11 +44,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
 
           <div className="ml-auto flex items-center gap-1.5">
-            {/* Business's Help button, wired to Hintora by one attribute. There is no
-                Hintora affordance anywhere on this page; the host owns the door. */}
+            {/* Business's Help button, wired to Signpost by one attribute. There is no
+                Signpost affordance anywhere on this page; the host owns the door. */}
             <button
               type="button"
-              data-hintora-trigger=""
+              data-signpost-trigger=""
               className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900"
             >
               Help

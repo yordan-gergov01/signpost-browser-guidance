@@ -1,5 +1,5 @@
 {
-  "name": "@hintora/client",
+  "name": "@signpost/client",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,8 +7,8 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "@hintora/client": "^0.1.0",
-    "@hintora/core": "^0.1.0",
+    "@signpost/client": "^0.1.0",
+    "@signpost/core": "^0.1.0",
     "zod": "^4.4.3"
   }
 }

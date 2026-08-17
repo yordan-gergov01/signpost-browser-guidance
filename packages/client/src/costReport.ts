@@ -1,4 +1,4 @@
-import type { GuideCallStats } from '@hintora/core/types/guide';
+import type { GuideCallStats } from '@signpost/core/types/guide';
 
 export type CostReport = {
   calls: number;

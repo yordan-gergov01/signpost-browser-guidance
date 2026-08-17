@@ -47,7 +47,7 @@ export function createSpotlight(): Spotlight {
   root.setAttribute('class', 'dim hidden');
 
   const mask = svg('mask');
-  mask.id = 'hintora-cutout';
+  mask.id = 'signpost-cutout';
 
   const sheet = svg('rect');
   sheet.setAttribute('width', '100%');

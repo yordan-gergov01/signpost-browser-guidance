@@ -1,4 +1,4 @@
-import { TIER_LABEL, type GuidanceTier } from '@hintora/core/types/guidance';
+import { TIER_LABEL, type GuidanceTier } from '@signpost/core/types/guidance';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const PIN_SIZE = 26;

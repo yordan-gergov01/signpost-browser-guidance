@@ -1,4 +1,4 @@
-import type { ElementState } from '@hintora/core/types/pageMap';
+import type { ElementState } from '@signpost/core/types/pageMap';
 
 export const REDACTED = '[redacted]';
 

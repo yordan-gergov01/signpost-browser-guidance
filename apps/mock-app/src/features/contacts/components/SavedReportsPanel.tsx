@@ -10,8 +10,8 @@ export function SavedReportsPanel() {
       actions={
         <>
           {/* Business's own contextual help. The attribute is the whole integration:
-              no Hintora markup, no Hintora styling, their button. */}
-          <Button variant="ghost" data-hintora-trigger="export my contacts">
+              no Signpost markup, no Signpost styling, their button. */}
+          <Button variant="ghost" data-signpost-trigger="export my contacts">
             How do I export?
           </Button>
           <Button data-testid="reports-export">Export</Button>

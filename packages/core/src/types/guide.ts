@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { MAX_ELEMENTS, MAX_INTENT_LENGTH } from '@hintora/core/config/budgets';
-import { promptPageMapSchema } from '@hintora/core/types/pageMap';
+import { MAX_ELEMENTS, MAX_INTENT_LENGTH } from '@signpost/core/config/budgets';
+import { promptPageMapSchema } from '@signpost/core/types/pageMap';
 
 /**
  * Every optional field is `.nullable()` and still required.

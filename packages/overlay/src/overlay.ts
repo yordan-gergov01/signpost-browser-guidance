@@ -1,14 +1,14 @@
 import { autoUpdate } from '@floating-ui/dom';
-import { OVERLAY_HOST_ATTRIBUTE } from '@hintora/core/distiller/selectors';
-import { createAnnotation } from '@hintora/overlay/annotation';
-import type { AnnotationAction } from '@hintora/overlay/annotation';
-import { createCommandBar } from '@hintora/overlay/commandBar';
-import { contentCentreX } from '@hintora/overlay/contentArea';
-import { createOffscreenChip, isOffscreen } from '@hintora/overlay/offscreen';
-import { createSpotlight } from '@hintora/overlay/spotlight';
-import { overlayCss } from '@hintora/overlay/styles';
-import { resolveAccent } from '@hintora/overlay/theme';
-import type { Overlay, OverlayOptions, OverlayStep } from '@hintora/overlay/types';
+import { OVERLAY_HOST_ATTRIBUTE } from '@signpost/core/distiller/selectors';
+import { createAnnotation } from '@signpost/overlay/annotation';
+import type { AnnotationAction } from '@signpost/overlay/annotation';
+import { createCommandBar } from '@signpost/overlay/commandBar';
+import { contentCentreX } from '@signpost/overlay/contentArea';
+import { createOffscreenChip, isOffscreen } from '@signpost/overlay/offscreen';
+import { createSpotlight } from '@signpost/overlay/spotlight';
+import { overlayCss } from '@signpost/overlay/styles';
+import { resolveAccent } from '@signpost/overlay/theme';
+import type { Overlay, OverlayOptions, OverlayStep } from '@signpost/overlay/types';
 
 const COMPLETE_LINGER_MS = 2600;
 
@@ -16,6 +16,19 @@ const COMPLETE_LINGER_MS = 2600;
 // real control underneath. Only our own surfaces opt back in.
 const HOST_STYLE =
   'all: initial; position: fixed; inset: 0; z-index: 2147483647; pointer-events: none;';
+
+/**
+ * Matched on the physical key rather than the character it produces.
+ *
+ * `key` reports what the active layout types, so on a non-Latin layout Ctrl+K
+ * arrives as a letter we do not recognise. The handler then never fires, never
+ * calls preventDefault, and the browser's own Ctrl+K is the only thing that
+ * happens. `code` is the same value on every layout.
+ *
+ * Slash is offered alongside it because some browsers and some host
+ * applications have already claimed Ctrl+K for themselves.
+ */
+const HOTKEY_CODES = new Set(['KeyK', 'Slash']);
 
 function hasArea(rect: DOMRect): boolean {
   return rect.width > 0 && rect.height > 0;
@@ -47,7 +60,9 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
       bar.close();
       handlers.onIntent?.(intent);
     },
-    onDismiss: () => bar.close(),
+    // The same exit as the Escape key, not just hiding the bar. Closing the bar
+    // on its own would leave the page dimmed with nothing on it to explain why.
+    onDismiss: () => endSession(),
   });
 
   layer.append(...spotlight.nodes, chip.element, ...note.nodes, bar.element);
@@ -202,7 +217,7 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
   }
 
   function onKeyDown(event: KeyboardEvent): void {
-    if (hotkey && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    if (hotkey && (event.ctrlKey || event.metaKey) && HOTKEY_CODES.has(event.code)) {
       event.preventDefault();
       api.ask();
       return;
@@ -299,7 +314,7 @@ export function createOverlay(options: OverlayOptions = {}): Overlay {
       note.render({
         index: 0,
         total: 0,
-        instruction: `Hintora stays off here. ${reason}`,
+        instruction: `Signpost stays off here. ${reason}`,
         actions: [{ label: 'Close', onClick: endSession }],
       });
       note.centre(contentCentreX(document));

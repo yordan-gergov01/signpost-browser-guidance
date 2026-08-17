@@ -1,13 +1,14 @@
-# Hintora
+# Signpost
 
 A browser-first guidance layer for SaaS products. A user types what they are trying
 to do inside a web application, and the system reads the page they are looking at,
 works out the next concrete action, and highlights the exact control to click. One
 step at a time, on their real data, inside the product they already have open.
 
-This is a proof of concept, and it is wired to a real model backend rather than a
-scripted mock. Every step in the demo is a live call to an OpenAI model, and the
-video shows it working end to end against a real page.
+I built this to work through an idea I kept coming back to, and to find out where it
+breaks. It is a proof of concept rather than a product, but it is wired to a real
+model backend rather than a scripted mock: every step in the demo is a live call to
+an OpenAI model, and the video shows it working end to end against a real page.
 
 [Video walkthrough](https://drive.google.com/file/d/1QFwnD4xu4rkFFewW4zuWPbO43zVZBTg_/view?usp=sharing)
 
@@ -82,14 +83,14 @@ script tag.
 flowchart LR
   subgraph app["Customer's web application"]
     dom["The page the user is on"]
-    subgraph embed["Hintora, delivered as one script tag"]
+    subgraph embed["Signpost, delivered as one script tag"]
       read["Read the page<br/>controls, names, state, position"]
       guard["Strip and check<br/>PII, sensitive pages, injection"]
       loop["Decide and verify<br/>one step at a time"]
       draw["Draw on the page<br/>isolated overlay"]
     end
   end
-  svc["Hintora service<br/>holds the key, validates every request,<br/>enforces per-session limits"]
+  svc["Signpost service<br/>holds the key, validates every request,<br/>enforces per-session limits"]
   model["Language model"]
 
   dom -->|read only, never modified| read
@@ -231,7 +232,7 @@ does damage.
 
 ## Why an SDK and not a browser extension
 
-The pivot to B2B decides this. The buyer is the software company, not the end user.
+Targeting B2B decides this. The buyer is the software company, not the end user.
 A product that requires every one of their customers to install an extension has a
 distribution problem the buyer cannot solve on their behalf, and they will not take
 on a support burden with no lever to pull.
@@ -349,10 +350,10 @@ customers needs four things this does not yet have.
 flowchart LR
   subgraph customer["Customer's product"]
     users["Their users"]
-    embed["Hintora embed"]
+    embed["Signpost embed"]
   end
 
-  subgraph platform["Hintora platform"]
+  subgraph platform["Signpost platform"]
     svc["Guidance service<br/>multi-tenant, rate limited"]
     flows["Flow store<br/>authored and learned routes"]
     events["Event stream<br/>content free, one per step"]
@@ -455,7 +456,7 @@ npm install
 npm run dev:all
 ```
 
-Open http://localhost:5173, press Ctrl+K or use the demo application's own Help
+Open http://localhost:5173, press Ctrl+K or Ctrl+slash, or use the demo's own Help
 button, and try "change my notification email", "export my contacts", or "how do I
 delete my account".
 

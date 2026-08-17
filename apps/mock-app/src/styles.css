@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import '@hintora/tailwind-preset/theme.css';
+@import '@signpost/tailwind-preset/theme.css';
 
 body {
   @apply bg-ink-50 text-ink-800 font-sans antialiased;

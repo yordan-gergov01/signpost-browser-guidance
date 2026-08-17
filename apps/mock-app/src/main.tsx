@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { boot } from '@hintora/sdk/boot';
+import { boot } from '@signpost/sdk/boot';
 import { App } from '@/app/App';
 import '@/styles.css';
 
@@ -24,16 +24,16 @@ const SUGGESTIONS = [
 // root in index.html; this call is the four lines a customer writes.
 const endpoint = import.meta.env['VITE_GUIDE_ENDPOINT'];
 
-const hintora = boot({
+const signpost = boot({
   suggestions: SUGGESTIONS,
   ...(endpoint ? { endpoint } : {}),
   // Nothing on screen. Telemetry is parked on the window for a developer to read
   // from the console, because the demo should look like the customer's product.
   onTelemetry: (event) => {
     if (import.meta.env.DEV) {
-      (window as Window & { hintoraTelemetry?: unknown }).hintoraTelemetry = event;
+      (window as Window & { signpostTelemetry?: unknown }).signpostTelemetry = event;
     }
   },
 });
 
-if (import.meta.env.DEV && hintora) window.hintora = hintora;
+if (import.meta.env.DEV && signpost) window.signpost = signpost;

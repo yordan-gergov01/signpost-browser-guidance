@@ -12,8 +12,8 @@ export default defineConfig({
     lib: {
       entry: 'src/embed.ts',
       formats: ['iife'],
-      name: 'HintoraEmbed',
-      fileName: () => 'hintora.js',
+      name: 'SignpostEmbed',
+      fileName: () => 'signpost.js',
     },
     target: 'es2020',
     sourcemap: true,

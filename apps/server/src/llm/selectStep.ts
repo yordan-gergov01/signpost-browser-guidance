@@ -4,21 +4,21 @@ import {
   MODELS,
   supportsTemperature,
   type ModelId,
-} from '@hintora/core/config/models';
-import { ESCALATE_BELOW_CONFIDENCE } from '@hintora/core/config/budgets';
-import { guideResponseSchema, type GuideResponse } from '@hintora/core/types/guide';
-import type { PromptPageMap } from '@hintora/core/types/pageMap';
-import { toStrictJsonSchema } from '@hintora/server/llm/jsonSchema';
+} from '@signpost/core/config/models';
+import { ESCALATE_BELOW_CONFIDENCE } from '@signpost/core/config/budgets';
+import { guideResponseSchema, type GuideResponse } from '@signpost/core/types/guide';
+import type { PromptPageMap } from '@signpost/core/types/pageMap';
+import { toStrictJsonSchema } from '@signpost/server/llm/jsonSchema';
 import {
   buildUserMessage,
   PROMPT_VERSION,
   SYSTEM_PROMPT,
-} from '@hintora/server/prompts/nextStep.v1';
+} from '@signpost/server/prompts/nextStep.v1';
 
 const RESPONSE_FORMAT = {
   type: 'json_schema',
   json_schema: {
-    name: 'hintora_next_step',
+    name: 'signpost_next_step',
     strict: true,
     schema: toStrictJsonSchema(guideResponseSchema),
   },

@@ -1,5 +1,5 @@
 import { describe as suite, expect, test } from 'vitest';
-import { classifyAction, requiresConfirmation } from '@hintora/core/safety/actionSafety';
+import { classifyAction, requiresConfirmation } from '@signpost/core/safety/actionSafety';
 
 suite('classifyAction', () => {
   test.each([

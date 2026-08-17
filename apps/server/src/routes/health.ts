@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
-import type { Selector } from '@hintora/server/llm/selectStep';
-import type { SessionStore } from '@hintora/server/sessions';
+import type { Selector } from '@signpost/server/llm/selectStep';
+import type { SessionStore } from '@signpost/server/sessions';
 
 export type HealthRouteDeps = {
   selector: Selector;

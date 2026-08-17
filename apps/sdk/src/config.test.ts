@@ -1,5 +1,5 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
-import { resolveConfig, resolveEndpoint } from '@hintora/sdk/config';
+import { resolveConfig, resolveEndpoint } from '@signpost/sdk/config';
 
 const BASE = 'https://app.business.test/contacts';
 
@@ -13,14 +13,14 @@ function scriptWith(attributes: Record<string, string>): Element {
 
 suite('resolveEndpoint', () => {
   test('accepts an absolute https endpoint', () => {
-    expect(resolveEndpoint('https://guide.business.test/hintora', BASE)).toBe(
-      'https://guide.business.test/hintora',
+    expect(resolveEndpoint('https://guide.business.test/signpost', BASE)).toBe(
+      'https://guide.business.test/signpost',
     );
   });
 
   test('resolves a same-origin relative endpoint against the page', () => {
-    expect(resolveEndpoint('/hintora/guide', BASE)).toBe(
-      'https://app.business.test/hintora/guide',
+    expect(resolveEndpoint('/signpost/guide', BASE)).toBe(
+      'https://app.business.test/signpost/guide',
     );
   });
 
@@ -42,9 +42,9 @@ suite('resolveEndpoint', () => {
 suite('resolveConfig', () => {
   beforeEach(() => {
     for (const name of [
-      'data-hintora-endpoint',
-      'data-hintora-accent',
-      'data-hintora-hotkey',
+      'data-signpost-endpoint',
+      'data-signpost-accent',
+      'data-signpost-hotkey',
     ]) {
       document.documentElement.removeAttribute(name);
     }
@@ -56,26 +56,26 @@ suite('resolveConfig', () => {
 
   test('reads the endpoint from the document root', () => {
     document.documentElement.setAttribute(
-      'data-hintora-endpoint',
-      'https://guide.business.test/hintora',
+      'data-signpost-endpoint',
+      'https://guide.business.test/signpost',
     );
     expect(resolveConfig(document, null)?.endpoint).toBe(
-      'https://guide.business.test/hintora',
+      'https://guide.business.test/signpost',
     );
   });
 
   test('prefers the script tag over the document root', () => {
     document.documentElement.setAttribute(
-      'data-hintora-endpoint',
+      'data-signpost-endpoint',
       'https://root.test/guide',
     );
-    const script = scriptWith({ 'data-hintora-endpoint': 'https://tag.test/guide' });
+    const script = scriptWith({ 'data-signpost-endpoint': 'https://tag.test/guide' });
     expect(resolveConfig(document, script)?.endpoint).toBe('https://tag.test/guide');
   });
 
   test('prefers an explicit option over both', () => {
     document.documentElement.setAttribute(
-      'data-hintora-endpoint',
+      'data-signpost-endpoint',
       'https://root.test/guide',
     );
     const config = resolveConfig(document, null, { endpoint: 'https://code.test/guide' });
@@ -83,27 +83,30 @@ suite('resolveConfig', () => {
   });
 
   test('refuses a javascript endpoint even when it is the only one', () => {
-    document.documentElement.setAttribute('data-hintora-endpoint', 'javascript:alert(1)');
+    document.documentElement.setAttribute(
+      'data-signpost-endpoint',
+      'javascript:alert(1)',
+    );
     expect(resolveConfig(document, null)).toBeNull();
   });
 
   test('keeps the hotkey on by default', () => {
-    const script = scriptWith({ 'data-hintora-endpoint': 'https://tag.test/guide' });
+    const script = scriptWith({ 'data-signpost-endpoint': 'https://tag.test/guide' });
     expect(resolveConfig(document, script)?.hotkey).toBe(true);
   });
 
   test('lets a host that already owns ctrl+k turn it off', () => {
     const script = scriptWith({
-      'data-hintora-endpoint': 'https://tag.test/guide',
-      'data-hintora-hotkey': 'Off',
+      'data-signpost-endpoint': 'https://tag.test/guide',
+      'data-signpost-hotkey': 'Off',
     });
     expect(resolveConfig(document, script)?.hotkey).toBe(false);
   });
 
   test('carries the accent through to the overlay', () => {
     const script = scriptWith({
-      'data-hintora-endpoint': 'https://tag.test/guide',
-      'data-hintora-accent': '#4f46e5',
+      'data-signpost-endpoint': 'https://tag.test/guide',
+      'data-signpost-accent': '#4f46e5',
     });
     expect(resolveConfig(document, script)?.accent).toBe('#4f46e5');
   });

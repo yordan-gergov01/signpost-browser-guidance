@@ -1,8 +1,12 @@
 import { afterEach, beforeEach, describe as suite, expect, test, vi } from 'vitest';
-import type { GuideRequest, GuideResponse, GuideResult } from '@hintora/core/types/guide';
-import { mountHtml } from '@hintora/core/testing/domFixtures';
-import { stubLayout } from '@hintora/core/testing/stubLayout';
-import { createGuidance, type Guidance } from '@hintora/client/guidanceSession';
+import type {
+  GuideRequest,
+  GuideResponse,
+  GuideResult,
+} from '@signpost/core/types/guide';
+import { mountHtml } from '@signpost/core/testing/domFixtures';
+import { stubLayout } from '@signpost/core/testing/stubLayout';
+import { createGuidance, type Guidance } from '@signpost/client/guidanceSession';
 
 /**
  * The account menu is inert on purpose: a real button, correctly named, that

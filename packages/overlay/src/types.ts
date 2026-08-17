@@ -1,6 +1,6 @@
-import type { ActionRisk } from '@hintora/core/safety/actionSafety';
-import type { GuidanceTier } from '@hintora/core/types/guidance';
-import type { Suggestion } from '@hintora/overlay/commandBar';
+import type { ActionRisk } from '@signpost/core/safety/actionSafety';
+import type { GuidanceTier } from '@signpost/core/types/guidance';
+import type { Suggestion } from '@signpost/overlay/commandBar';
 
 export type OverlayStep = {
   /** 1-based. */

@@ -2,7 +2,7 @@ import {
   guideResultSchema,
   type GuideRequest,
   type GuideResult,
-} from '@hintora/core/types/guide';
+} from '@signpost/core/types/guide';
 
 /**
  * The client never holds an API key. It talks to our own endpoint, which holds

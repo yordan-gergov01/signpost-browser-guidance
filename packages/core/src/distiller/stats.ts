@@ -1,5 +1,5 @@
-import { toPromptPageMap } from '@hintora/core/distiller/prompt';
-import type { PageMap } from '@hintora/core/types/pageMap';
+import { toPromptPageMap } from '@signpost/core/distiller/prompt';
+import type { PageMap } from '@signpost/core/types/pageMap';
 
 export type CompressionReport = {
   rawHtmlBytes: number;

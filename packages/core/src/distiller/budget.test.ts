@@ -1,6 +1,6 @@
 import { describe as suite, expect, test } from 'vitest';
-import { applyBudget, rankScore } from '@hintora/core/distiller/budget';
-import type { PageElement } from '@hintora/core/types/pageMap';
+import { applyBudget, rankScore } from '@signpost/core/distiller/budget';
+import type { PageElement } from '@signpost/core/types/pageMap';
 
 function element(overrides: Partial<PageElement> = {}): PageElement {
   return {

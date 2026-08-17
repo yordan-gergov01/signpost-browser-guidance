@@ -1,7 +1,7 @@
 import { describe as suite, expect, test } from 'vitest';
-import type { GuideResponse } from '@hintora/core/types/guide';
-import type { PromptPageMap } from '@hintora/core/types/pageMap';
-import { isConsistent } from '@hintora/server/llm/selectStep';
+import type { GuideResponse } from '@signpost/core/types/guide';
+import type { PromptPageMap } from '@signpost/core/types/pageMap';
+import { isConsistent } from '@signpost/server/llm/selectStep';
 
 const PAGE: PromptPageMap = {
   url: '/settings/notifications',

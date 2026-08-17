@@ -1,5 +1,5 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
-import { createAnnotation, type Annotation } from '@hintora/overlay/annotation';
+import { createAnnotation, type Annotation } from '@signpost/overlay/annotation';
 
 const NOTE_HEIGHT = 120;
 const NOTE_WIDTH = 328;

@@ -1,4 +1,4 @@
-import type { PageElement, PageMap } from '@hintora/core/types/pageMap';
+import type { PageElement, PageMap } from '@signpost/core/types/pageMap';
 
 /**
  * What a control is, independent of what it is currently doing.

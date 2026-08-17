@@ -1,23 +1,23 @@
-import { TRIGGER_ATTRIBUTE } from '@hintora/core/config/attributes';
-import { accessibleNameOf, targetNameOf } from '@hintora/core/distiller/accessibleName';
-import { applyBudget, DEFAULT_MAX_ELEMENTS } from '@hintora/core/distiller/budget';
-import { findActiveModal, modalNameOf } from '@hintora/core/distiller/modal';
-import { resolveRole } from '@hintora/core/distiller/roles';
-import { nearestHeadingOf, sectionPathOf } from '@hintora/core/distiller/sections';
+import { TRIGGER_ATTRIBUTE } from '@signpost/core/config/attributes';
+import { accessibleNameOf, targetNameOf } from '@signpost/core/distiller/accessibleName';
+import { applyBudget, DEFAULT_MAX_ELEMENTS } from '@signpost/core/distiller/budget';
+import { findActiveModal, modalNameOf } from '@signpost/core/distiller/modal';
+import { resolveRole } from '@signpost/core/distiller/roles';
+import { nearestHeadingOf, sectionPathOf } from '@signpost/core/distiller/sections';
 import {
   CANDIDATE_SELECTOR,
   OVERLAY_HOST_ATTRIBUTE,
-} from '@hintora/core/distiller/selectors';
-import { pageSignature } from '@hintora/core/distiller/signature';
-import { safeValueOf, stateOf } from '@hintora/core/distiller/state';
+} from '@signpost/core/distiller/selectors';
+import { pageSignature } from '@signpost/core/distiller/signature';
+import { safeValueOf, stateOf } from '@signpost/core/distiller/state';
 import {
   boxOf,
   isInViewport,
   isVisible,
   scrollOffsetOf,
-} from '@hintora/core/distiller/visibility';
-import type { Box, ScrollOffset, Viewport } from '@hintora/core/distiller/visibility';
-import type { PageElement, PageMap } from '@hintora/core/types/pageMap';
+} from '@signpost/core/distiller/visibility';
+import type { Box, ScrollOffset, Viewport } from '@signpost/core/distiller/visibility';
+import type { PageElement, PageMap } from '@signpost/core/types/pageMap';
 
 export type DistillOptions = {
   maxElements?: number;

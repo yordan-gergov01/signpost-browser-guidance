@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { guideRequestSchema, type GuideResult } from '@hintora/core/types/guide';
-import type { Selector } from '@hintora/server/llm/selectStep';
-import type { SessionStore } from '@hintora/server/sessions';
+import { guideRequestSchema, type GuideResult } from '@signpost/core/types/guide';
+import type { Selector } from '@signpost/server/llm/selectStep';
+import type { SessionStore } from '@signpost/server/sessions';
 
 export type GuideRouteDeps = {
   selector: Selector;

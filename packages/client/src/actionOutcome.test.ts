@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe as suite, expect, test, vi } from 'vitest';
-import { watchOutcome } from '@hintora/client/actionOutcome';
+import { watchOutcome } from '@signpost/client/actionOutcome';
 
 const onChanged = vi.fn();
 const onInert = vi.fn();

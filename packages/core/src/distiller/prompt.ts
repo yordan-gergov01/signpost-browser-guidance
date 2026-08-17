@@ -1,4 +1,4 @@
-import type { PageMap, PromptPageMap } from '@hintora/core/types/pageMap';
+import type { PageMap, PromptPageMap } from '@signpost/core/types/pageMap';
 
 /**
  * Strips geometry. The overlay needs bbox to draw; the model must never see it,

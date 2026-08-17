@@ -30,7 +30,7 @@ export function createCommandBar(callbacks: CommandBarCallbacks): CommandBar {
   const input = document.createElement('input');
   input.type = 'text';
   input.placeholder = 'What are you trying to do?';
-  input.setAttribute('aria-label', 'Ask Hintora');
+  input.setAttribute('aria-label', 'Ask Signpost');
 
   const hint = document.createElement('kbd');
   hint.textContent = 'esc';

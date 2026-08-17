@@ -1,5 +1,5 @@
 /** Marker on the overlay host so distillation never maps our own UI. */
-export const OVERLAY_HOST_ATTRIBUTE = 'data-hintora-overlay';
+export const OVERLAY_HOST_ATTRIBUTE = 'data-signpost-overlay';
 
 /**
  * Everything that could plausibly be a guidance target. Deliberately broad: it

@@ -1,4 +1,4 @@
-import { SESSION_BUDGET } from '@hintora/core/config/budgets';
+import { SESSION_BUDGET } from '@signpost/core/config/budgets';
 
 type SessionState = {
   llmCalls: number;

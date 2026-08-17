@@ -1,4 +1,4 @@
-import { accessibleNameOf } from '@hintora/core/distiller/accessibleName';
+import { accessibleNameOf } from '@signpost/core/distiller/accessibleName';
 
 /** Landmark tags mapped to the keyword used when the landmark has no name. */
 const LANDMARK_TAGS: Record<string, string> = {

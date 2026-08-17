@@ -1,4 +1,4 @@
-import type { PageElement } from '@hintora/core/types/pageMap';
+import type { PageElement } from '@signpost/core/types/pageMap';
 
 export type ActionRisk = 'safe' | 'destructive' | 'irreversible';
 

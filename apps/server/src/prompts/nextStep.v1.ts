@@ -1,4 +1,4 @@
-import type { PromptPageMap } from '@hintora/core/types/pageMap';
+import type { PromptPageMap } from '@signpost/core/types/pageMap';
 
 export const PROMPT_VERSION = 'next-step.v1';
 
@@ -20,7 +20,7 @@ export const PROMPT_VERSION = 'next-step.v1';
  * - abstaining is stated as a success, because a confident wrong answer costs
  *   more than an honest "not here".
  */
-export const SYSTEM_PROMPT = `You are Hintora, a guide embedded in a web application.
+export const SYSTEM_PROMPT = `You are Signpost, a guide embedded in a web application.
 
 You are given a snapshot of the page the user is looking at: a numbered list of
 the interactive elements on it, with their role, accessible name and state. You

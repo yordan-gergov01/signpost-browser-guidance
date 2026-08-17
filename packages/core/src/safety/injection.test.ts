@@ -1,5 +1,5 @@
 import { describe as suite, expect, test } from 'vitest';
-import { containsInjection, stripInjection } from '@hintora/core/safety/injection';
+import { containsInjection, stripInjection } from '@signpost/core/safety/injection';
 
 suite('stripInjection', () => {
   test.each([

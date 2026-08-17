@@ -1,5 +1,5 @@
-import { distillWithElements } from '@hintora/core/distiller/distill';
-import { elementKey } from '@hintora/core/distiller/signature';
+import { distillWithElements } from '@signpost/core/distiller/distill';
+import { elementKey } from '@signpost/core/distiller/signature';
 
 /**
  * A strategy for writing down where a control is, and finding it again later.
@@ -83,7 +83,7 @@ export const selectorChain: Locator = {
  * that description against a fresh reading of the page. No position, no CSS.
  */
 export const fingerprint: Locator = {
-  name: 'hintora fingerprint',
+  name: 'signpost fingerprint',
   record: (target, doc) => {
     const { pageMap, byId } = distillWithElements(doc);
     const entry = pageMap.elements.find((element) => byId.get(element.id) === target);

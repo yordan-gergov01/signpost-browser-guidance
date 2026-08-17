@@ -1,8 +1,8 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
-import { distill, distillWithElements } from '@hintora/core/distiller/distill';
-import { elementKey, elementState } from '@hintora/core/distiller/signature';
-import { mountHtml } from '@hintora/core/testing/domFixtures';
-import { stubLayout } from '@hintora/core/testing/stubLayout';
+import { distill, distillWithElements } from '@signpost/core/distiller/distill';
+import { elementKey, elementState } from '@signpost/core/distiller/signature';
+import { mountHtml } from '@signpost/core/testing/domFixtures';
+import { stubLayout } from '@signpost/core/testing/stubLayout';
 
 const PAGE = `
   <body>

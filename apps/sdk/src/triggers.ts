@@ -1,5 +1,5 @@
-import { TRIGGER_ATTRIBUTE } from '@hintora/core/config/attributes';
-import { MAX_INTENT_LENGTH } from '@hintora/core/config/budgets';
+import { TRIGGER_ATTRIBUTE } from '@signpost/core/config/attributes';
+import { MAX_INTENT_LENGTH } from '@signpost/core/config/budgets';
 
 export type TriggerTarget = {
   ask: () => void;
@@ -7,12 +7,12 @@ export type TriggerTarget = {
 };
 
 // JSX renders a valueless custom attribute as the string "true", so a React host
-// writing `data-hintora-trigger` gets that instead of an empty value. Reading it
+// writing `data-signpost-trigger` gets that instead of an empty value. Reading it
 // as an intent would send "true" to the model on every Help click.
 const NO_INTENT = new Set(['', 'true']);
 
 /**
- * Binds the host application's own controls, marked with `data-hintora-trigger`.
+ * Binds the host application's own controls, marked with `data-signpost-trigger`.
  * An empty value opens the command bar; a value is the intent to run.
  *
  * Delegated rather than bound per element, because the host is a single page

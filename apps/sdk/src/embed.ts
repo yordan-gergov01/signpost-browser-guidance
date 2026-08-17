@@ -1,18 +1,18 @@
-import { boot } from '@hintora/sdk/boot';
-import { drainQueue } from '@hintora/sdk/queue';
+import { boot } from '@signpost/sdk/boot';
+import { drainQueue } from '@signpost/sdk/queue';
 
 // Read at evaluation time: `document.currentScript` only points at our tag while
 // the tag itself is executing.
 const script = document.currentScript;
 
 function start(): void {
-  const pending = window.hintora;
+  const pending = window.signpost;
 
-  const hintora = boot({ script });
-  if (!hintora) return;
+  const signpost = boot({ script });
+  if (!signpost) return;
 
-  window.hintora = hintora;
-  drainQueue(pending, hintora);
+  window.signpost = signpost;
+  drainQueue(pending, signpost);
 }
 
 // The tag usually sits in <head>, and the overlay wants a page to attach to.

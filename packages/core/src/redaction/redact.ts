@@ -1,4 +1,4 @@
-import { PII_PATTERNS, type PiiKind } from '@hintora/core/redaction/patterns';
+import { PII_PATTERNS, type PiiKind } from '@signpost/core/redaction/patterns';
 
 export type RedactionReport = Partial<Record<PiiKind, number>>;
 

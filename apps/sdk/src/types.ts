@@ -1,11 +1,11 @@
-import type { TelemetryEvent } from '@hintora/client/guidanceSession';
-import type { Suggestion } from '@hintora/overlay/commandBar';
+import type { TelemetryEvent } from '@signpost/client/guidanceSession';
+import type { Suggestion } from '@signpost/overlay/commandBar';
 
 /**
  * The whole public surface. Four verbs, because the host application owns its
  * own UI and we are only ever the thing behind their button.
  */
-export type Hintora = {
+export type Signpost = {
   /** Opens the command bar. This is what a customer's Help control calls. */
   ask: () => void;
   /** Starts a session directly, skipping the question. */
@@ -16,7 +16,7 @@ export type Hintora = {
   destroy: () => void;
 };
 
-export type HintoraConfig = {
+export type SignpostConfig = {
   /** Guidance service. Absolute or same-origin relative, http(s) only. */
   endpoint: string;
   /** Offered when the command bar opens, so a first use explains itself. */
@@ -27,7 +27,7 @@ export type HintoraConfig = {
   onTelemetry?: (event: TelemetryEvent) => void;
 };
 
-export type HintoraOptions = Partial<HintoraConfig> & {
+export type SignpostOptions = Partial<SignpostConfig> & {
   /** The embed script element, when the configuration rides on its attributes. */
   script?: Element | null;
 };
@@ -38,6 +38,6 @@ export type QueuedCall = readonly [method: string, ...args: readonly unknown[]];
 declare global {
   interface Window {
     /** An array until boot replaces it: that is the pre-load queue. */
-    hintora?: Hintora | QueuedCall[];
+    signpost?: Signpost | QueuedCall[];
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@hintora/mock-app",
+  "name": "@signpost/mock-app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,13 +10,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hintora/sdk": "^0.1.0",
+    "@signpost/sdk": "^0.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^8.3.0"
   },
   "devDependencies": {
-    "@hintora/tailwind-preset": "*",
+    "@signpost/tailwind-preset": "*",
     "@tailwindcss/vite": "^4.1.16",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",

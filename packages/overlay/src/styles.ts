@@ -1,4 +1,4 @@
-import { DEFAULT_ACCENT, onAccent } from '@hintora/overlay/theme';
+import { DEFAULT_ACCENT, onAccent } from '@signpost/overlay/theme';
 
 /**
  * Scoped to the shadow root, and every length is absolute. The host controls

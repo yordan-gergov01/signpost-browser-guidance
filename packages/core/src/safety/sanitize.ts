@@ -2,9 +2,9 @@ import {
   mergeRedactionReports,
   redactText,
   type RedactionReport,
-} from '@hintora/core/redaction/redact';
-import { stripInjection, type InjectionReport } from '@hintora/core/safety/injection';
-import type { PageMap } from '@hintora/core/types/pageMap';
+} from '@signpost/core/redaction/redact';
+import { stripInjection, type InjectionReport } from '@signpost/core/safety/injection';
+import type { PageMap } from '@signpost/core/types/pageMap';
 
 export type SafetyReport = {
   redaction: RedactionReport;

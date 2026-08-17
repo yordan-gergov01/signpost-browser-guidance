@@ -1,5 +1,5 @@
 /** Only the accent is themeable, and only through this attribute. */
-export const ACCENT_ATTRIBUTE = 'data-hintora-accent';
+export const ACCENT_ATTRIBUTE = 'data-signpost-accent';
 
 /**
  * Warm on purpose. Business software is overwhelmingly cool - blues, slates,

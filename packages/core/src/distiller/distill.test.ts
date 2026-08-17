@@ -1,12 +1,12 @@
 import { beforeEach, describe as suite, expect, test } from 'vitest';
-import { TRIGGER_ATTRIBUTE } from '@hintora/core/config/attributes';
-import { distill } from '@hintora/core/distiller/distill';
-import { REDACTED } from '@hintora/core/distiller/state';
-import { OVERLAY_HOST_ATTRIBUTE } from '@hintora/core/distiller/selectors';
-import { pageMapSchema } from '@hintora/core/types/pageMap';
-import type { PageElement, PageMap } from '@hintora/core/types/pageMap';
-import { mountHtml, readFixture } from '@hintora/core/testing/domFixtures';
-import { stubLayout } from '@hintora/core/testing/stubLayout';
+import { TRIGGER_ATTRIBUTE } from '@signpost/core/config/attributes';
+import { distill } from '@signpost/core/distiller/distill';
+import { REDACTED } from '@signpost/core/distiller/state';
+import { OVERLAY_HOST_ATTRIBUTE } from '@signpost/core/distiller/selectors';
+import { pageMapSchema } from '@signpost/core/types/pageMap';
+import type { PageElement, PageMap } from '@signpost/core/types/pageMap';
+import { mountHtml, readFixture } from '@signpost/core/testing/domFixtures';
+import { stubLayout } from '@signpost/core/testing/stubLayout';
 
 function load(fixture: string): PageMap {
   mountHtml(readFixture(import.meta.url, `fixtures/${fixture}`));

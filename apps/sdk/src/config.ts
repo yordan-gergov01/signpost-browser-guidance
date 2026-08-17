@@ -1,6 +1,6 @@
-import { ENDPOINT_ATTRIBUTE, HOTKEY_ATTRIBUTE } from '@hintora/core/config/attributes';
-import { ACCENT_ATTRIBUTE } from '@hintora/overlay/theme';
-import type { HintoraConfig, HintoraOptions } from '@hintora/sdk/types';
+import { ENDPOINT_ATTRIBUTE, HOTKEY_ATTRIBUTE } from '@signpost/core/config/attributes';
+import { ACCENT_ATTRIBUTE } from '@signpost/overlay/theme';
+import type { SignpostConfig, SignpostOptions } from '@signpost/sdk/types';
 
 const ALLOWED_PROTOCOLS = new Set(['http:', 'https:']);
 
@@ -41,8 +41,8 @@ function attributeOf(name: string, doc: Document, script: Element | null): strin
 export function resolveConfig(
   doc: Document,
   script: Element | null,
-  overrides: HintoraOptions = {},
-): HintoraConfig | null {
+  overrides: SignpostOptions = {},
+): SignpostConfig | null {
   // The programmatic value goes through the same check: a customer passing their
   // own user input straight in is not a case worth being surprised by.
   const endpoint = resolveEndpoint(

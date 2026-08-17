@@ -1,6 +1,6 @@
-import { createGuidance } from '@hintora/client/guidanceSession';
-import { createOverlay } from '@hintora/overlay/overlay';
-import type { Hintora, HintoraConfig } from '@hintora/sdk/types';
+import { createGuidance } from '@signpost/client/guidanceSession';
+import { createOverlay } from '@signpost/overlay/overlay';
+import type { Signpost, SignpostConfig } from '@signpost/sdk/types';
 
 /**
  * Assembles the three pieces and hands back the public API.
@@ -9,7 +9,7 @@ import type { Hintora, HintoraConfig } from '@hintora/sdk/types';
  * the loop, the server talks to the model. This file is the seam a customer
  * never sees past.
  */
-export function createHintora(config: HintoraConfig): Hintora {
+export function createSignpost(config: SignpostConfig): Signpost {
   const overlay = createOverlay({
     suggestions: config.suggestions,
     hotkey: config.hotkey,
@@ -31,7 +31,7 @@ export function createHintora(config: HintoraConfig): Hintora {
     ...(config.onTelemetry ? { onTelemetry: config.onTelemetry } : {}),
   });
 
-  const api: Hintora = {
+  const api: Signpost = {
     ask: () => overlay.ask(),
 
     run: (intent) => void guidance.start(intent),

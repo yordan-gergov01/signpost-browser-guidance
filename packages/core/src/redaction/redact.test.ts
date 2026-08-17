@@ -1,5 +1,5 @@
 import { describe as suite, expect, test } from 'vitest';
-import { redactText, totalRedactions } from '@hintora/core/redaction/redact';
+import { redactText, totalRedactions } from '@signpost/core/redaction/redact';
 
 suite('redactText', () => {
   test.each([

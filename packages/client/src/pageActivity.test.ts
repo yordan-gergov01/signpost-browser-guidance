@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe as suite, expect, test, vi } from 'vitest';
-import { trackActivity, type PageActivity } from '@hintora/client/pageActivity';
+import { trackActivity, type PageActivity } from '@signpost/client/pageActivity';
 
 type Deferred = { promise: Promise<Response>; settle: () => void; fail: () => void };
 

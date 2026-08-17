@@ -1,10 +1,10 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
-import { createSelector } from '@hintora/server/llm/selectStep';
-import { registerGuideRoute } from '@hintora/server/routes/guide';
-import { registerHealthRoute } from '@hintora/server/routes/health';
-import { createSessionStore } from '@hintora/server/sessions';
-import type { Env } from '@hintora/server/env';
+import { createSelector } from '@signpost/server/llm/selectStep';
+import { registerGuideRoute } from '@signpost/server/routes/guide';
+import { registerHealthRoute } from '@signpost/server/routes/health';
+import { createSessionStore } from '@signpost/server/sessions';
+import type { Env } from '@signpost/server/env';
 
 const MAX_BODY_BYTES = 256 * 1024;
 

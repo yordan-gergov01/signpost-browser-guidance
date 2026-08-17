@@ -1,9 +1,9 @@
 import { describe as suite, expect, test } from 'vitest';
-import { distill } from '@hintora/core/distiller/distill';
-import { formatCompression, measureCompression } from '@hintora/core/distiller/stats';
-import { mountHtml, readFixture } from '@hintora/core/testing/domFixtures';
-import { stubLayout } from '@hintora/core/testing/stubLayout';
-import type { CompressionReport } from '@hintora/core/distiller/stats';
+import { distill } from '@signpost/core/distiller/distill';
+import { formatCompression, measureCompression } from '@signpost/core/distiller/stats';
+import { mountHtml, readFixture } from '@signpost/core/testing/domFixtures';
+import { stubLayout } from '@signpost/core/testing/stubLayout';
+import type { CompressionReport } from '@signpost/core/distiller/stats';
 
 const FIXTURES = ['business-contacts.html', 'edge-cases.html', 'modal.html'] as const;
 

@@ -3,7 +3,7 @@
  * Tailwind v4 is CSS-first, so the preset is a theme block, not a JS config.
  *
  *   @import 'tailwindcss';
- *   @import '@hintora/tailwind-preset/theme.css';
+ *   @import '@signpost/tailwind-preset/theme.css';
  *
  * Not used by the overlay, which ships scoped CSS inside a shadow root. The two
  * palettes are kept apart on purpose: everything here is cool and squared off,

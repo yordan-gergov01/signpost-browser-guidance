@@ -1,5 +1,5 @@
 {
-  "name": "@hintora/sdk",
+  "name": "@signpost/sdk",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,9 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hintora/client": "^0.1.0",
-    "@hintora/core": "^0.1.0",
-    "@hintora/overlay": "^0.1.0"
+    "@signpost/client": "^0.1.0",
+    "@signpost/core": "^0.1.0",
+    "@signpost/overlay": "^0.1.0"
   },
   "devDependencies": {
     "vite": "^7.2.2"

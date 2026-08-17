@@ -1,17 +1,17 @@
-import { MIN_CONFIDENCE, SESSION_BUDGET } from '@hintora/core/config/budgets';
-import { distillWithElements } from '@hintora/core/distiller/distill';
-import { toPromptPageMap } from '@hintora/core/distiller/prompt';
-import { elementKey, elementState } from '@hintora/core/distiller/signature';
-import { classifyAction } from '@hintora/core/safety/actionSafety';
-import { assessPage } from '@hintora/core/safety/sensitivePage';
-import { sanitizePageMap, type SafetyReport } from '@hintora/core/safety/sanitize';
-import type { GuideResponse } from '@hintora/core/types/guide';
-import type { PageElement, PageMap } from '@hintora/core/types/pageMap';
-import { watchOutcome } from '@hintora/client/actionOutcome';
-import { watchForChange } from '@hintora/client/changeDetection';
-import { createCostReport, type CostReport } from '@hintora/client/costReport';
-import { trackActivity, type PageActivity } from '@hintora/client/pageActivity';
-import { requestStep } from '@hintora/client/transport';
+import { MIN_CONFIDENCE, SESSION_BUDGET } from '@signpost/core/config/budgets';
+import { distillWithElements } from '@signpost/core/distiller/distill';
+import { toPromptPageMap } from '@signpost/core/distiller/prompt';
+import { elementKey, elementState } from '@signpost/core/distiller/signature';
+import { classifyAction } from '@signpost/core/safety/actionSafety';
+import { assessPage } from '@signpost/core/safety/sensitivePage';
+import { sanitizePageMap, type SafetyReport } from '@signpost/core/safety/sanitize';
+import type { GuideResponse } from '@signpost/core/types/guide';
+import type { PageElement, PageMap } from '@signpost/core/types/pageMap';
+import { watchOutcome } from '@signpost/client/actionOutcome';
+import { watchForChange } from '@signpost/client/changeDetection';
+import { createCostReport, type CostReport } from '@signpost/client/costReport';
+import { trackActivity, type PageActivity } from '@signpost/client/pageActivity';
+import { requestStep } from '@signpost/client/transport';
 
 /**
  * idle -> observing -> thinking -> guiding -> verifying -> guiding

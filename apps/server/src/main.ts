@@ -1,5 +1,5 @@
-import { readEnv } from '@hintora/server/env';
-import { buildServer } from '@hintora/server/server';
+import { readEnv } from '@signpost/server/env';
+import { buildServer } from '@signpost/server/server';
 
 const env = readEnv();
 const app = buildServer(env);
